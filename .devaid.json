@@ -1,0 +1,12 @@
+{
+    "language": "javascript",
+    "framework": "express",
+    "database": "mongodb",
+    "boilerplate": "1.0",
+    "dbmodels": [
+        "Role",
+        "User",
+        "OTP",
+        "Product"
+    ]
+}
