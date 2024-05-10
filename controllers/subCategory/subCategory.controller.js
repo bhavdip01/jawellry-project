@@ -6,7 +6,6 @@ const helpers = {};
 
 const controllers = {
   create: async (req, res) => {
-    //* check if subCategory already exists by name
     const subCategoryExists = await DB.SUB_CATEGORY.findOne({ name: req.body.name });
     if (subCategoryExists)
       return response.DUPLICATE_VALUE({
