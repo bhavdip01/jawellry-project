@@ -7,7 +7,7 @@ const {
 } = require("../helpers/constant.helper");
 
 const {
-  CATEGORY: { VALIDATOR, APIS },
+  SUB_CATEGORY: { VALIDATOR, APIS },
 } = require("../controllers");
 
 router.post(

@@ -7,14 +7,7 @@ module.exports = {
     body: Joi.object({
       name: Joi.string().lowercase().trim().required(),
       description: Joi.string().trim(),
-      price: Joi.number().required(),
-      categoryIds: Joi.array().items(Joi.string()).required(),
-      subCategoryIds: Joi.array().items(Joi.string()).required(),
-      sku: Joi.string(),
-      personalization: Joi.string(),
-      subTitle: Joi.string(),
-      tags: Joi.string(),
-      quantity: Joi.number(),
+      categoryId: Joi.string(),
     }),
   }),
   get: validator({
@@ -22,7 +15,6 @@ module.exports = {
       name: Joi.string().lowercase().trim(),
       _id: Joi.string(),
       categoryId: Joi.string(),
-      subCategoryIds: Joi.string(),
     }),
   }),
   update: validator({
@@ -32,14 +24,8 @@ module.exports = {
     body: Joi.object({
       name: Joi.string().lowercase().trim(),
       description: Joi.string().trim(),
-      price: Joi.number(),
-      categoryId: Joi.array().items(Joi.string()),
-      subCategoryIds: Joi.array().items(Joi.string()),
-      sku: Joi.string(),
-      personalization: Joi.string(),
-      subTitle: Joi.string(),
-      tags: Joi.string(),
-      quantity: Joi.number(),
+      isMain: Joi.boolean(),
+      categoryId: Joi.string(),
     }),
   }),
   delete: validator({

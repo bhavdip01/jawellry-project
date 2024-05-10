@@ -4,12 +4,12 @@ const {
   ENUM: { ROLE },
 } = require("../helpers/constant.helper");
 
-let categorySchema = new Schema(
+let productCategorySchema = new Schema(
   {
     name: {
       type: String,
       unique: true,
-      message: "please enter valid category name or category already exist",
+      message: "please enter valid productCategory name or productCategory already exist",
     },
     description: {
       type: String,
@@ -36,6 +36,6 @@ let categorySchema = new Schema(
   }
 );
 
-let categoryModel = model("Category", categorySchema, "Category");
+let productCategoryModel = model("productCategory", productCategorySchema, "productCategory");
 
-module.exports = categoryModel;
+module.exports = productCategoryModel;

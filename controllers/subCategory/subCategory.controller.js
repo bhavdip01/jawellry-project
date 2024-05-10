@@ -6,17 +6,17 @@ const helpers = {};
 
 const controllers = {
   create: async (req, res) => {
-    //* check if product already exists by name
-    const productExists = await DB.PRODUCT.findOne({ name: req.body.name });
-    if (productExists)
+    //* check if subCategory already exists by name
+    const subCategoryExists = await DB.SUB_CATEGORY.findOne({ name: req.body.name });
+    if (subCategoryExists)
       return response.DUPLICATE_VALUE({
         res,
         message: MESSAGE.ALREADY_EXISTS,
         payload: { name: req.body.name },
       });
 
-    //* create product
-    await DB.PRODUCT.create(req.body);
+    //* create subCategory
+    await DB.SUB_CATEGORY.create(req.body);
 
     return response.OK({
       res,
@@ -26,83 +26,72 @@ const controllers = {
   },
 
   get: async (req, res) => {
-    //* check if product already exists by name
+    //* check if subCategory already exists by name
     let query = { isActive: true };
 
     if (req.query._id) {
-      query = { _id: req.query._id, isActive: true };
+      query = { _id: req.query._id };
     }
     if (req.query.name) {
-      query = { $regex: req.query.name, $options: "i", isActive: true };
+      query = { $regex: req.query.name, $options: "i" };
     }
-    if (req.query.categoryId) {
-      query = { categoryIds: req.query.categoryId };
-    }
-    if (req.query.subCategoryId) {
-      query = { subCategoryId: req.query.subCategoryId };
-    }
-    console.log(req.query);
-    const productExists = await DB.PRODUCT.find(query);
-    if (!productExists)
+    const subCategoryExists = await DB.SUB_CATEGORY.find(query);
+    if (!subCategoryExists)
       return response.NO_CONTENT_FOUND({
         res,
         message: MESSAGE.NOT_FOUND,
         payload: {},
       });
 
-    //* create product
-    // await DB.PRODUCT.create(req.body);
-    // console.log()
-
     return response.OK({
       res,
       message: MESSAGE.SUCCESS,
-      payload: productExists,
+      payload: subCategoryExists,
     });
   },
 
   update: async (req, res) => {
-    //* check if product already exists by name
+    //* check if subCategory already exists by name
 
-    const productExists = await DB.PRODUCT.findOneAndUpdate(
+    const subCategoryExists = await DB.SUB_CATEGORY.findOneAndUpdate(
       { _id: req.query._id },
       { $set: req.body },
       { new: true }
     );
-    if (!productExists)
+    if (!subCategoryExists)
       return response.NOT_FOUND({
         res,
         message: MESSAGE.NOT_FOUND,
         payload: {},
       });
 
-    //* create product
-    // await DB.PRODUCT.create(req.body);
+    //* create subCategory
+    // await DB.SUB_CATEGORY.create(req.body);
 
     return response.OK({
       res,
       message: MESSAGE.SUCCESS,
-      payload: productExists,
+      payload: req.body,
     });
   },
 
   delete: async (req, res) => {
-    //* check if product already exists by name
+    //* check if subCategory already exists by name
 
-    const productExists = await DB.PRODUCT.findOneAndUpdate(
+    const subCategoryExists = await DB.SUB_CATEGORY.findOneAndUpdate(
       { _id: req.query._id },
       { $set: { isActive: false } },
       { new: true }
     );
-    if (!productExists)
+    if (!subCategoryExists)
       return response.NOT_FOUND({
         res,
         message: MESSAGE.NOT_FOUND,
         payload: {},
       });
 
-    //* create product
-    // await DB.PRODUCT.create(req.body);
+    //* create subCategory
+    // await DB.SUB_CATEGORY.create(req.body);
 
     return response.OK({
       res,

@@ -4,12 +4,18 @@ const {
   ENUM: { ROLE },
 } = require("../helpers/constant.helper");
 
-let categorySchema = new Schema(
+let subCategorySchema = new Schema(
   {
     name: {
       type: String,
       unique: true,
-      message: "please enter valid category name or category already exist",
+      message:
+        "please enter valid subCategory name or subCategory already exist",
+    },
+    categoryId: {
+      type: Schema.Types.ObjectId,
+      ref: "Category",
+      required: true,
     },
     description: {
       type: String,
@@ -36,6 +42,6 @@ let categorySchema = new Schema(
   }
 );
 
-let categoryModel = model("Category", categorySchema, "Category");
+let subCategoryModel = model("subCategory", subCategorySchema, "subCategory");
 
-module.exports = categoryModel;
+module.exports = subCategoryModel;
