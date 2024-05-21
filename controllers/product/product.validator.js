@@ -19,10 +19,12 @@ module.exports = {
   }),
   get: validator({
     query: Joi.object({
-      name: Joi.string().lowercase().trim(),
+      search: Joi.string().lowercase().trim(),
       _id: Joi.string(),
       categoryId: Joi.string(),
       subCategoryIds: Joi.string(),
+      startPrice: Joi.string(),
+      endPrice: Joi.string()
     }),
   }),
   update: validator({
