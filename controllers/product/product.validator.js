@@ -22,9 +22,11 @@ module.exports = {
       search: Joi.string().lowercase().trim(),
       _id: Joi.string(),
       categoryId: Joi.string(),
-      subCategoryIds: Joi.string(),
+      subCategoryId: Joi.string(),
       startPrice: Joi.string(),
-      endPrice: Joi.string()
+      endPrice: Joi.string(),
+      page:Joi.string(),
+      pageSize:Joi.string(),
     }),
   }),
   update: validator({
