@@ -34,6 +34,9 @@ const controllers = {
     if (req.query.name) {
       query = { $regex: req.query.name, $options: "i" };
     }
+    if (req.query.categoryId) {
+      query = {categoryId:req.query.categoryId}
+    }
     const subCategoryExists = await DB.SUB_CATEGORY.find(query);
     if (!subCategoryExists)
       return response.NO_CONTENT_FOUND({

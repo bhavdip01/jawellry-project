@@ -7,6 +7,7 @@ module.exports = {
     body: Joi.object({
       name: Joi.string().lowercase().trim().required(),
       description: Joi.string().trim(),
+      isMain: Joi.boolean(),
     }),
   }),
   get: validator({

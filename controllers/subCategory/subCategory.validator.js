@@ -8,6 +8,7 @@ module.exports = {
       name: Joi.string().lowercase().trim().required(),
       description: Joi.string().trim(),
       categoryId: Joi.string(),
+      isMain: Joi.boolean(),
     }),
   }),
   get: validator({
