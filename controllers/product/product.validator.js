@@ -9,7 +9,7 @@ module.exports = {
       name: Joi.string().lowercase().trim().required(),
       description: Joi.string().trim(),
       price: Joi.number().required(),
-      categoryIds: Joi.array().items(Joi.string()).required(),
+      categoryIds: Joi.array().items(Joi.string()).required(),  
       subCategoryIds: Joi.array().items(Joi.string()).required(),
       shippingPolicyId: Joi.string().required(),
       privacyAndPolicyId: Joi.string().required(),
@@ -25,14 +25,6 @@ module.exports = {
     query: Joi.object({
       search: Joi.string().lowercase().trim(),
       _id: Joi.string(),
-<<<<<<< Updated upstream
-      categoryId: Joi.string(),
-      subCategoryId: Joi.string(),
-      startPrice: Joi.string(),
-      endPrice: Joi.string(),
-      page:Joi.string(),
-      pageSize:Joi.string(),
-=======
       categoryIds: Joi.string(),
       subCategoryIds: Joi.string(),
       shippingPolicyId: Joi.string(),
@@ -40,7 +32,6 @@ module.exports = {
       endPrice: Joi.string(),
       page:Joi.string(),
       limit:Joi.string(),
->>>>>>> Stashed changes
     }),
   }),
   update: validator({

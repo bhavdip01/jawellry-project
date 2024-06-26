@@ -1,45 +1,32 @@
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
 const DB = require("../../models");
-// const { constants.MESSAGE } = require("../../helpers/constant.helper");
-const { response, constants } = require("../../helpers");
+const { MESSAGE } = require("../../helpers/constant.helper");
+const { response } = require("../../helpers");
 const categoryModel = require("../../models/category.model");
 const subCategoryModel = require("../../models/subCategory.model");
-<<<<<<< Updated upstream
-=======
 const shippingPolicy = require("../../models/shippingPolicy.model")
 const image = require("../../models/image.model")
 const fs = require("fs");
 const path = require('path')
 const port = process.env.PORT
 
->>>>>>> Stashed changes
 
 const helpers = {};
 
 const controllers = {
 
   create: async (req, res) => {
-<<<<<<< Updated upstream
-    //* check if product already exists by name
-=======
     // console.log("==========>",req.body)
->>>>>>> Stashed changes
     const productExists = await DB.PRODUCT.findOne({ name: req.body.name });
     if (productExists)
       return response.DUPLICATE_VALUE({
         res,
-        message: constants.MESSAGE.ALREADY_EXISTS,
+        message: MESSAGE.ALREADY_EXISTS,
         payload: { name: req.body.name },
       });
 
 
-<<<<<<< Updated upstream
-    return response.OK({
-      res,
-      message: constants.MESSAGE.SUCCESS,
-      payload: req.body,
-=======
     // console.log("===============>111",req.files)
 
     const imagesData = await Promise.all(req.files.map(async (file) => {
@@ -75,21 +62,17 @@ const controllers = {
       res,
       message: MESSAGE.SUCCESS,
       payload: createdProduct,
->>>>>>> Stashed changes
     });
   },
 
   get: async (req, res) => {
     let query = { isActive: true };
 
-<<<<<<< Updated upstream
-=======
     let page = req.query.page;
     let limit = req.query.limit;
     let skip = (page - 1) * limit;
 
     console.log("req.query", req.query)
->>>>>>> Stashed changes
     try {
       // Helper function to validate ObjectId
       const validateObjectId = (id, field) => {
@@ -99,17 +82,17 @@ const controllers = {
         return new ObjectId(id);
       };
 
-      // Extract pagination parameters
-      const page = parseInt(req.query.page, 10) || 1;
-      const pageSize = parseInt(req.query.pageSize, 10) || 10;
-      const skip = (page - 1) * pageSize;
-      console.log(page, pageSize, skip)
       // Filter by product ID
       if (req.query._id) {
         query._id = validateObjectId(req.query._id, "_id")
         
         
       }
+
+      // Filter by product name
+      // if (req.query.name) {
+      //   query.name = { $regex: req.query.name, $options: "i" };
+      // }
 
       // Filter by category ID
       if (req.query.categoryIds) {
@@ -174,39 +157,25 @@ const controllers = {
 
       console.log("Constructed query:", query);
 
-<<<<<<< Updated upstream
-      const totalItems = await DB.PRODUCT.countDocuments(query);
-      const products = await DB.PRODUCT.find(query).skip(skip).limit(pageSize);
-
-=======
       const products = await DB.PRODUCT.find(query)
       .populate({
           path:"shippingPolicyId",
           model:"ShippingPolicy"
       })
->>>>>>> Stashed changes
       console.log("Products found:", products);
 
       if (products.length === 0) {
         return response.NO_CONTENT_FOUND({
           res,
-          message: constants.MESSAGE.NOT_FOUND,
+          message: MESSAGE.NOT_FOUND,
           payload: {},
         });
       }
 
       return response.OK({
         res,
-        message: constants.MESSAGE.SUCCESS,
-        payload: {
-          products,
-          pagination: {
-            totalItems,
-            currentPage: page,
-            totalPages: Math.ceil(totalItems / pageSize),
-            pageSize,
-          },
-        },
+        message: MESSAGE.SUCCESS,
+        payload: products,
       });
     } catch (error) {
       console.error("Error in get method:", error.message);
@@ -228,7 +197,7 @@ const controllers = {
     if (!productExists)
       return response.NOT_FOUND({
         res,
-        message: constants.MESSAGE.NOT_FOUND,
+        message: MESSAGE.NOT_FOUND,
         payload: {},
       });
 
@@ -237,7 +206,7 @@ const controllers = {
 
     return response.OK({
       res,
-      message: constants.MESSAGE.SUCCESS,
+      message: MESSAGE.SUCCESS,
       payload: productExists,
     });
   },
@@ -289,25 +258,11 @@ const controllers = {
   delete: async (req, res) => {
     //* check if product already exists by name
 
-<<<<<<< Updated upstream
-    const productExists = await DB.PRODUCT.findOneAndUpdate(
-      { _id: req.query._id },
-      { $set: { isActive: false } },
-      { new: true }
-    );
-    if (!productExists)
-      return response.NOT_FOUND({
-        res,
-        message: constants.MESSAGE.NOT_FOUND,
-        payload: {},
-      });
-=======
     const { productId } = req.query
     if (productId) {
       const products = await DB.PRODUCT.findById(productId)
       const imageId = products.imageIds
       // console.log("===========>11",imageId)
->>>>>>> Stashed changes
 
       if (imageId.length > 0) {
         const images = await image.find({ _id: { $in: imageId } })
@@ -400,13 +355,8 @@ const controllers = {
 
     return response.OK({
       res,
-<<<<<<< Updated upstream
-      message: constants.MESSAGE.SUCCESS,
-      payload: req.body,
-=======
       message: MESSAGE.SUCCESS,
       payload: productData,
->>>>>>> Stashed changes
     });
   }
 

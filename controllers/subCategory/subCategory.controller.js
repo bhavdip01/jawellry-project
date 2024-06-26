@@ -41,11 +41,7 @@ const controllers = {
     if (req.query.categoryId) {
       query = {categoryId:req.query.categoryId}
     }
-<<<<<<< Updated upstream
-    const subCategoryExists = await DB.SUB_CATEGORY.find(query);
-=======
     const subCategoryExists = await DB.SUB_CATEGORY.find(query).skip(skip).limit(limit);
->>>>>>> Stashed changes
     if (!subCategoryExists)
       return response.NO_CONTENT_FOUND({
         res,
