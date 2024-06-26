@@ -4,6 +4,7 @@ const {
   ENUM: { ROLE },
 } = require("../helpers/constant.helper");
 const { required } = require("joi");
+const mongoose = require("mongoose")
 
 let productSchema = new Schema(
   {
@@ -36,18 +37,40 @@ let productSchema = new Schema(
     },
     categoryIds: [
       {
-        type: Schema.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: "Category",
         required: true,
       },
     ],
     subCategoryIds: [
       {
-        type: Schema.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: "subCategory",
         required: true,
       },
     ],
+    imageIds: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Image",
+        required: true,
+      },
+    ],
+    shippingPolicyId: {
+      type: Schema.Types.ObjectId,
+      ref: "ShippingPolicy",
+      required: true,
+    },
+    privacyAndPolicyId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "privacyAndPolicy",
+      required: true,
+    },
+    tremAndConditionId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "tremAndCondition",
+      required: true,
+    },
     isActive: {
       type: Boolean,
       default: true,

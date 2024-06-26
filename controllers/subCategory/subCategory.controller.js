@@ -28,6 +28,10 @@ const controllers = {
     //* check if subCategory already exists by name
     let query = { isActive: true };
 
+    let page = req.query.page;
+    let limit = req.query.limit;
+    let skip = (page - 1) * limit;
+
     if (req.query._id) {
       query = { _id: req.query._id };
     }
@@ -37,7 +41,11 @@ const controllers = {
     if (req.query.categoryId) {
       query = {categoryId:req.query.categoryId}
     }
+<<<<<<< Updated upstream
     const subCategoryExists = await DB.SUB_CATEGORY.find(query);
+=======
+    const subCategoryExists = await DB.SUB_CATEGORY.find(query).skip(skip).limit(limit);
+>>>>>>> Stashed changes
     if (!subCategoryExists)
       return response.NO_CONTENT_FOUND({
         res,

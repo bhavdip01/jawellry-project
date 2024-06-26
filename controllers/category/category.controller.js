@@ -7,6 +7,8 @@ const helpers = {};
 const controllers = {
   create: async (req, res) => {
     //* check if category already exists by name
+
+
     const categoryExists = await DB.CATEGORY.findOne({ name: req.body.name });
     if (categoryExists)
       return response.DUPLICATE_VALUE({
@@ -29,13 +31,18 @@ const controllers = {
     //* check if category already exists by name
     let query = { isActive: true };
 
+
+    let page = req.query.page;
+    let limit = req.query.limit;
+    let skip = (page - 1) * limit;
+
     if (req.query._id) {
       query = { _id: req.query._id };
     }
     if (req.query.name) {
       query = { $regex: req.query.name, $options: "i" };
     }
-    const categoryExists = await DB.CATEGORY.find(query);
+    const categoryExists = await DB.CATEGORY.find(query).skip(skip).limit(limit);
     if (!categoryExists)
       return response.NO_CONTENT_FOUND({
         res,

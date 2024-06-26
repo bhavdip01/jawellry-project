@@ -14,6 +14,8 @@ module.exports = {
     query: Joi.object({
       name: Joi.string().lowercase().trim(),
       _id: Joi.string(),
+      page:Joi.string(),
+      limit:Joi.string(),
     }),
   }),
   update: validator({

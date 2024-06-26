@@ -6,10 +6,11 @@ const express = require('express');
 const path = require('path');
 
 const env = require('./config/env.config');
-const app = express();
+const app = express()
 
 app.use(require('./middleware/request.logger'));
-app.use("/public", express.static(path.join(__dirname, 'public')));
+console.log("path.join(__dirname, 'Public')", path.join(__dirname, 'Public'))
+app.use("/Public", express.static(path.join(__dirname, 'Public')));
 
 app.use(require('cors')({ origin: '*' }));
 app.use(express.json({ limit: env.JSON_BODY_LIMIT }));
@@ -23,5 +24,8 @@ app.use((req, res) =>
 
 //* This is used to handle all the errors that are thrown
 app.use(require('./middleware/error.handler'));
+
+
+
 
 module.exports = app;

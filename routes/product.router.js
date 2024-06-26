@@ -13,6 +13,7 @@ const {
 router.post(
   "/",
   auth({ usersAllowed: [ROLE.ADMIN] }),
+  uploads,
   VALIDATOR.create,
   APIS.create
 );
@@ -28,14 +29,34 @@ router.put(
   "/",
   auth({ usersAllowed: [ROLE.ADMIN] }),
   VALIDATOR.update,
-  APIS.update
+  APIS.update,
 );
+
+router.put(
+  "/addProductImage",
+  uploads,
+  VALIDATOR.update,
+  APIS.addProductImage
+
+)
 
 router.delete(
   "/",
   auth({ usersAllowed: [ROLE.ADMIN] }),
   VALIDATOR.delete,
   APIS.delete
-);
+)
+
+router.delete(
+  "/removeImage",
+  VALIDATOR.removeImage,
+  APIS.removeImage,
+)
+
+router.get(
+  "/getProduct",
+  VALIDATOR.getProduct,
+  APIS.getProduct,
+)
 
 module.exports = router;

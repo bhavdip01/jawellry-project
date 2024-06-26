@@ -2,20 +2,24 @@ const { response, logger } = require("../helpers");
 const env = require("../config/env.config");
 
 const validator = (schema) => (req, res, next) => {
+  // console.log("req.body", req.body)
   const paths = Object.keys(schema);
+  // console.log("paths",paths)
   if (!paths.length) return next();
   if (!["body", "query", "params"].some((path) => paths.includes(path)))
     return next();
 
   for (let path of paths) {
     const dataForValidation = req[path];
+    console.log("dataForValidation", dataForValidation)
     const { value, error } = schema[path].validate(dataForValidation, {
-      allowUnknown: false,
-      stripUnknown: true,
+      // allowUnknown: false,
+      // stripUnknown: true,
       abortEarly: false,
     });
     if (error) {
       const context = error?.details;
+      // console.log(`Validation failed for ${path}.`, context)
       return response.BAD_REQUEST({
         res,
         message: `Validation failed for ${path}.`,

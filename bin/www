@@ -8,7 +8,12 @@ const app = require('../app');
 const http = require('http');
 const connectdb = require('../config/database.config');
 const { logger, common } = require('../helpers');
-
+const jwt = require('jsonwebtoken');
+const socketIo = require('socket.io');
+const { subscribe } = require('diagnostics_channel');
+const room = require("../models/room.model")
+const messages = require("../models/message.model");
+const { timeStamp } = require('console');
 /**
  * Get port from environment and store in Express.
  */
@@ -21,6 +26,115 @@ app.set('port', port);
  */
 
 const server = http.createServer(app);
+
+const io = socketIo(server)
+
+async function socketFunction(io) {
+
+  io.use((socket, next) => {
+
+    // console.log("=====>",socket.handshake.headers)
+    if (socket.handshake.headers.authorization) {
+      // console.log("==========>11",socket.handshake.headers.authorization)
+      jwt.verify(socket.handshake.headers.authorization, process.env.JWT_SECRET, function (err, decoded) {
+        // console.log("=====>",jwt.verify(socket.handshake.headers))
+
+        if (err) return next(new Error('Authentication error'));
+        socket.decoded = decoded;
+        // console.log("==========>11", socket.decoded)
+        // console.log("======>21",socket.User._id)
+        // console.log("=====>",socket.decoded._id)
+        next();
+      });
+    }
+    else {
+      console.log("error")
+      next(new Error('Authentication error'));
+    }
+  })
+
+  // console.log("==========>12")
+  // Socket setup
+
+  io.on("connection", async (socket) => {
+    console.log("clinet connected");
+
+    socket.on("createRoom", async ({receiver}) => {
+      const sender = socket.decoded._id
+
+      try {
+        const rooms = {
+          sender: sender,
+          receiver: receiver,
+        }
+        // console.log("=======>", rooms)
+        const createdRoom = await room.create(rooms)
+        socket.emit("roomCreated", { success: true, room: createdRoom })
+
+        socket.join(createdRoom._id.toString()).emit("roomJoined", { success: true, room: createdRoom, message:"Room joined successfully"})
+      } catch (error) {
+        // socket.emit("roomCreated", { success: false, message: "room not created"})
+      }
+    })
+
+    socket.on("findRoom", async ({senderId})=>{ 
+    
+      try {
+        const rooms = await room.find({sender : senderId}).sort({createdAt :-1})
+        for(let i = 0; i < rooms.length; i++){
+          const currentRoom = rooms[i]
+
+          const message = await messages.findOne({roomId : currentRoom._id}).sort({createdAt :-1});
+          console.log("======>00",message)
+          socket.emit("findroom", {success: true, Roomfind: message})
+            
+        }
+          socket.emit("findRooms", {success: true, Roomfind: rooms})   
+
+      } catch (error) {
+        socket.emit("roomsfind", {success: false, message: "rooms not find"})
+      } 
+    })
+
+    socket.on("createMessage", async ({roomId,message,messageType})=>{
+      const senderId = socket.decoded._id
+    
+      try {
+        const payload = {
+          sender: senderId,
+          roomId: roomId,
+          message: message,
+          messageType: messageType
+        }
+
+        const createMessage = await messages.create(payload)
+        socket.emit("messageCreated", {success: true, messaged: createMessage})
+      } catch (error) {
+        socket.emit("createMessage", {success: false, messaged: "message not created"})
+      } 
+    })
+
+    socket.on("findMessage", async ({roomid}) =>{
+      try {
+       
+        const messaged = await messages.find({roomId : roomid}).sort({_id: -1}).limit(1)
+         
+        socket.emit("findMessage", {success: true, Messagefind : messaged})
+      } catch (error) {
+        socket.emit("messagefind", {success: false, data: "message not find"})
+      } 
+    })
+
+    socket.on('disconnect', () => {
+      console.log("Client disconnected")
+    })
+  })
+
+
+}
+
+socketFunction(io)
+
 
 /**
  * Listen on provided port, on all network interfaces.

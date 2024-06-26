@@ -16,6 +16,8 @@ module.exports = {
       name: Joi.string().lowercase().trim(),
       _id: Joi.string(),
       categoryId: Joi.string(),
+      page:Joi.string(),
+      limit:Joi.string(),
     }),
   }),
   update: validator({
