@@ -12,7 +12,7 @@ const meetingSchema = new Schema(
             ref: "User",
             required: true,
         },
-        tital: {
+        title: {
             type: String,
         },
         description: {

@@ -5,11 +5,11 @@ const createMeeting = async(req,res)=>{
     
     try {
      
-        const {userId,tital,description,startDate,endDate,startTime,endTime} = req.body
+        const {userId,title,description,startDate,endDate,startTime,endTime} = req.body
 
         const payload = {
             userId:userId,
-            tital:tital,
+            title:title,
             description:description,
             startDate:startDate,
             endDate:endDate,
@@ -69,7 +69,7 @@ const updateMetting = async(req,res) =>{
      
 
         const payload = {
-            tital:req.body.tital,
+            title:req.body.title,
             description:req.body.description,
             startDate:req.body.startDate,
             endDate:req.body.endDate,

@@ -280,12 +280,12 @@ const controllers = {
         }
 
         let aas = await image.deleteMany({ _id: { $in: imageId } })
-        console.log("======>23", aas)
+        // console.log("======>23", aas)
 
       }
 
       let vgc = await DB.PRODUCT.findOneAndDelete(productId)
-      console.log("======>23", vgc)
+      // console.log("======>23", vgc)
 
 
       return res.status(200).send({

@@ -4,6 +4,7 @@ const env = require('../config/env.config');
 const { logger } = require('../helpers');
 const { string, number, boolean, required } = require('joi');
 
+
 const privacyAndPolicySchema = new Schema(
     {
         name: {

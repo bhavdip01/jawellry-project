@@ -26,7 +26,7 @@ const getFeedBack = async(req,res,next)=>{
 
         if(userid){
 
-            feedBackData = await feedback.find({ userId: userid })
+            feedBackData = await feedback.find({ userId: userid }).skip(skip).limit(limit)
         }
         else if(productid){
 

@@ -7,7 +7,7 @@ module.exports = {
     createMeeting: validator({
     body: Joi.object({
       userId: Joi.array().items(Joi.string()).required(),
-      tital: Joi.string().trim(),
+      title: Joi.string().trim(),
       description:Joi.string().trim(),
       startDate:Joi.date().iso(),
       endDate:Joi.date().iso(),
@@ -30,7 +30,7 @@ module.exports = {
       id: Joi.string(),
     }),
     body: Joi.object({
-      tital: Joi.string().trim(),
+      title: Joi.string().trim(),
       description:Joi.string().trim(),
       startDate:Joi.date().iso(),
       endDate:Joi.date().iso(),

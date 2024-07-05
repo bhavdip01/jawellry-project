@@ -4,10 +4,15 @@ const router = express.Router();
 
 const feedBack = require("../controllers/feedBack/feedBack.controller");
 
-router.route("/").post(feedBack.createFeedBack),
+const { auth } = require("../middleware/auth");
+const {
+    ENUM: { ROLE },
+} = require("../helpers/constant.helper")
+
+router.route("/").post(auth({ usersAllowed: [ROLE.USER] }),feedBack.createFeedBack),
 router.route("/").get(feedBack.getFeedBack),
-router.route("/").put(feedBack.updateFeedBack),
-router.route("/").delete(feedBack.deleteFeedBack)
+router.route("/").put(auth({ usersAllowed: [ROLE.USER] }),feedBack.updateFeedBack),
+router.route("/").delete(auth({ usersAllowed: [ROLE.USER] }),feedBack.deleteFeedBack)
 
 
 

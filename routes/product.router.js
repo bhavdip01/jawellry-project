@@ -37,6 +37,7 @@ router.put(
 
 router.put(
   "/addProductImage",
+  auth({ usersAllowed: [ROLE.ADMIN]}),
   uploads,
   VALIDATOR.update,
   APIS.addProductImage
@@ -52,12 +53,14 @@ router.delete(
 
 router.delete(
   "/removeImage",
+  auth({ usersAllowed: [ROLE.ADMIN]}),
   VALIDATOR.removeImage,
   APIS.removeImage,
 )
 
 router.get(
   "/getProduct",
+  auth({ usersAllowed: [ROLE.ADMIN]}),
   VALIDATOR.getProduct,
   APIS.getProduct,
 )

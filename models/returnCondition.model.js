@@ -4,18 +4,17 @@ const env = require('../config/env.config');
 const { logger } = require('../helpers');
 const { string, number, boolean, required } = require('joi');
 
-const termAndConditionSchema = new Schema(
+const returnConditionSchema = new Schema(
     {
-        name: {
-            type: String,
+        title: {
+            type: String
         },
         description: {
-            type: String,
-        },
-        
+            type: String
+        }
     }
 )
 
-let  termAndConditionModel = model('termAndCondition' , termAndConditionSchema, 'termAndCondition')
+let returnConditionModel = model('ReturnCondition', returnConditionSchema, 'ReturnCondition');
 
-module.exports = termAndConditionModel
+module.exports = returnConditionModel;

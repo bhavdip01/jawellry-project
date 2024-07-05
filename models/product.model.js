@@ -66,14 +66,22 @@ let productSchema = new Schema(
       ref: "privacyAndPolicy",
       required: true,
     },
-    tremAndConditionId: {
+    termAndConditionId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "tremAndCondition",
+      ref: "termAndCondition",
       required: true,
     },
     isActive: {
       type: Boolean,
       default: true,
+    },
+    isEngraving: {
+      type: Boolean,
+      default: false,
+    },
+    isGift: {
+      type: Boolean,
+      default: false,
     },
     description: {
       type: String,

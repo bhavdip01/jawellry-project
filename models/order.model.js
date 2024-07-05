@@ -19,6 +19,9 @@ const orderSchema = new Schema(
                 required: true,
             }
         ],
+        Engraving: {
+            type: String,
+        },
         addToCartId: {
             type:mongoose.Schema.Types.ObjectId,
             ref: "addToCart",
@@ -53,3 +56,5 @@ const orderSchema = new Schema(
 let orderModel = model("Order", orderSchema, "Order")
 
 module.exports = orderModel
+
+

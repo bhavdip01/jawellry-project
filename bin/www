@@ -85,7 +85,7 @@ async function socketFunction(io) {
           const currentRoom = rooms[i]
 
           const message = await messages.findOne({roomId : currentRoom._id}).sort({createdAt :-1});
-          console.log("======>00",message)
+          // console.log("======>00",message)
           socket.emit("findroom", {success: true, Roomfind: message})
             
         }

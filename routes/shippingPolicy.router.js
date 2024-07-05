@@ -4,10 +4,15 @@ const router = express.Router();
 
 const shippingPolicy = require("../controllers/shippingPolicy/shippingPolicy.controller");
 
-router.route("/").post(shippingPolicy.createShippingPolicy),
+const { auth } = require("../middleware/auth");
+const {
+    ENUM: { ROLE },
+} = require("../helpers/constant.helper")
+
+router.route("/").post(auth({ usersAllowed: [ROLE.ADMIN] }),shippingPolicy.createShippingPolicy),
 router.route("/").get(shippingPolicy.getShippingpolicy),
-router.route("/").put(shippingPolicy.updateShippingpolicy)
-router.route("/").delete(shippingPolicy.deleteShippingPolicy)
+router.route("/").put(auth({ usersAllowed: [ROLE.ADMIN] }),shippingPolicy.updateShippingpolicy)
+router.route("/").delete(auth({ usersAllowed: [ROLE.ADMIN] }),shippingPolicy.deleteShippingPolicy)
 
 
 

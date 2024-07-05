@@ -26,14 +26,14 @@ const getUseCoupon = async(req,res,next)=>{
         const { id } = req.query
 
         let useCouponData = await useCoupon.findOne({_id : id})
-        .populate({
-            path: 'productId',
-            model: 'Product'
-        })
-        .populate({
-            path: 'userId',
-            model: 'User'
-        });
+        // .populate({
+        //     path: 'couponId',
+        //     model: 'coupon'
+        // })
+        // .populate({
+        //     path: 'userId',
+        //     model: 'User'
+        // });
         
         return res.status(200).send({
             message:"useCouponData fetch successfully",

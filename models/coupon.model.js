@@ -4,6 +4,10 @@ const env = require('../config/env.config');
 const { logger } = require('../helpers');
 const { string, number, boolean, required } = require('joi');
 
+const { 
+    ENUM: { ROLE},
+}= require("../helpers/constant.helper")
+
 const couponSchema = new Schema(
     {
         couponName :{
@@ -42,6 +46,10 @@ const couponSchema = new Schema(
             type: String,
             default: true
         }
+    },
+    {
+        timestamps: true,
+        versionKey: false,
     }
 )
 

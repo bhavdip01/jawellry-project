@@ -6,8 +6,6 @@ const { logger } = require('../helpers');
 const { string, number, boolean } = require('joi');
 
 
-
-
 const imageSchema = new Schema(
     {
         image:{ 

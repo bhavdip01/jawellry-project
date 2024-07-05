@@ -1,100 +1,96 @@
-const privacyAndPolicy = require("../../models/privacyAndpolicy.model")
+const privacyAndPolicy = require("../../models/privacyAndpolicy.model");
 
+const createPrivacyAndPolicy = async (req, res, next) => {
+  try {
+    const { name, description } = req.body;
 
-const createPrivacyAndPolicy = async(req,res,next)=>{
+    const payload = {
+      name: name,
+      description: description,
+    };
 
-    try {
-         
-        const {name,description} = req.body
+    let privacyAndPolicyData = await privacyAndPolicy.create(payload);
 
-        const payload = {
-            name:name,
-            description:description
-        }
+    return res.status(200).send({
+      message: "privacyAndPolicy Data successfully",
+      payload: privacyAndPolicyData,
+    });
+  } catch (error) {
+    return res.status(200).send(error);
+  }
+};
 
-        let privacyAndPolicyData = await privacyAndPolicy.create(payload)
+const getPrivacyAndPolicy = async (req, res, next) => {
+  try {
+    const { id, name, page, limit } = req.query;
+    let query;
+    let skip = (page - 1) * limit;
 
-        return res.status(200).send({
-            message:"privacyAndPolicy Data successfully",
-            payload:privacyAndPolicyData
-        })
-
-    } catch (error) {
-        return res.status(200).send(error);
+    if (id) {
+      query = { _id: id };
+    } else if (name) {
+      query = { name: name };
     }
-}
+    let privacyAndPolicyData = await privacyAndPolicy
+      .find(query)
+      .skip(skip)
+      .limit(limit);
+    return res.status(200).send({
+      message: "privacyAndPolicy Data successfully",
+      payload: privacyAndPolicyData,
+    });
+  } catch (error) {
+    return res.status(200).send(error);
+  }
+};
 
-const getPrivacyAndPolicy = async(req,res,next)=>{
+const updatePrivacyAndPolicy = async (req, res, next) => {
+  try {
+    const { id } = req.query;
 
-    try {
-        const  { id , name,page,limit} = req.query
-        let privacyAndPolicyData
-        let skip = (page -1) * limit
+    const payload = {
+      name: req.body.name,
+      description: req.body.description,
+    };
 
-        if(id){
-            privacyAndPolicyData = await privacyAndPolicy.findOne({ _id: id })
-        }
-        else if(name){
-            privacyAndPolicyData = await privacyAndPolicy.find({name : name}).skip(skip).limit(limit)
-        }
-        return res.status(200).send({
-            message:"privacyAndPolicy Data successfully",
-            payload:privacyAndPolicyData
-        })
-        
-    } catch (error) {
-        return res.status(200).send(error);
-    }
-}
+    let privacyAndPolicyData = await privacyAndPolicy.findOneAndUpdate(
+      {
+        _id: id,
+      },
+      {
+        $set: payload,
+      },
+      {
+        new: true,
+      }
+    );
+    return res.status(200).send({
+      message: "privacyAndPolicy Data updated successfully",
+      payload: privacyAndPolicyData,
+    });
+  } catch (error) {
+    return res.status(200).send(error);
+  }
+};
 
-const updatePrivacyAndPolicy = async(req,res,next)=>{
-    try {
-        const {id} = req.query
+const deletePrivacyAndPolicy = async (req, res, next) => {
+  try {
+    const { id } = req.query;
+    await privacyAndPolicy.findOneAndDelete({
+      _id: id,
+    });
 
-        const payload = {
-            name:req.body.name,
-            description:req.body.description
-        }
+    return res.status(200).send({
+      message: "privacyAndPolicy Data delete successfully",
+    });
+  } catch (error) {
+    return res.status(200).send(error);
+  }
+};
 
-        let privacyAndPolicyData = await privacyAndPolicy.findOneAndUpdate(
-            {
-                _id : id
-            },
-            {
-                $set: payload
-            },
-            {
-                new:true
-            }
-        )
-        return res.status(200).send({
-            message:"privacyAndPolicy Data updated successfully",
-            payload:privacyAndPolicyData
-        })
-    } catch (error) {
-        return res.status(200).send(error);
-    }
-}
-
-const deletePrivacyAndPolicy = async(req,res,next)=>{
-
-    try {
-        const {id} = req.query
-        await privacyAndPolicy.findOneAndDelete({
-            _id: id
-        })
-
-        return res.status(200).send({
-            message:"privacyAndPolicy Data delete successfully",
-            
-        })
-
-    } catch (error) {
-        return res.status(200).send(error);
-    }
-}
-
-
-
-
-module.exports = {createPrivacyAndPolicy,getPrivacyAndPolicy,updatePrivacyAndPolicy,deletePrivacyAndPolicy}
+module.exports = {
+  createPrivacyAndPolicy,
+  getPrivacyAndPolicy,
+  updatePrivacyAndPolicy,
+  deletePrivacyAndPolicy,
+};

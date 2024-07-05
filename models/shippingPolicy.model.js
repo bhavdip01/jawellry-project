@@ -7,14 +7,14 @@ const mongoose = require("mongoose");
 
 const shippingPolicySchema = new Schema(
     {
-        tital: {
+        title: {
             type: String,
         },
         manufacturDay: {
             type: Number,
         },
         countryShippingPrice: [
-           {
+            {
                 country: {
                     type: String,
                 },

@@ -18,7 +18,7 @@ const createBanner = async (req,res) => {
         let imagePath = path.substring(publicIndex);
 
         const payload = {
-            image:`https://localhost:9003${imagePath}`,
+            image:`https://localhost:${port}${imagePath}`,
             imageName:filename,
             mimetype:mimetype,
             size:size,
@@ -153,14 +153,14 @@ const deleteBanner = async (req, res) => {
 const addBanner = async (req, res) => {
     try {
         let bannerdata = await banner.findOne({ name: req.body.name});
-
+        console.log("=====>11",bannerdata)
         const imagesData = await Promise.all(req.files.map(async (file) =>{
             const {size,mimetype,path,filename} = file
             const publicIndex = path.indexOf('/Public');
             let imagePath = path.substring(publicIndex)
 
             const payload = {
-                image:`https://localhost:9003${imagePath}`,
+                image:`https://localhost:${port}${imagePath}`,
                 imageName:filename,
                 mimetype:mimetype,
                 size:size,
@@ -176,10 +176,11 @@ const addBanner = async (req, res) => {
 
         await banner.updateOne(
             {_id:bannerdata._id},
-            {$set: {imageId :imageIds}}
+            {$set: {imageId :imageIds}},
         );
 
         bannerdata = await banner.findOne({_id:banner._id});
+        console.log("===>22",bannerdata);
 
         return res.status(200).send({
             message:"bannerData create successfully",
@@ -193,7 +194,7 @@ const addBanner = async (req, res) => {
 
 const removeBannerimage = async(req, res) => {
     const { _id } = req.query
-    const images = await image.findOne({ _id })
+    const images = await image.findOne({_id })
    
     const imagePath = images.path
 

@@ -1,8 +1,17 @@
 const order = require("../../models/order.model")
+const product = require("../../models/product.model")
 
 const addOrder = async(req,res,next)=>{
     try {
-        const {userId,productId,addToCartId,couponId,addressId,orderStatus,phoneNumber} = req.body
+
+        const {userId,productId,addToCartId,couponId,addressId,orderStatus,phoneNumber,Engraving} = req.body
+        
+       const checkUseCoupon = await order.findOne({usedId: userId, couponId: couponId})
+       if(checkUseCoupon){
+        return res.status(200).send("user already use this coupon")
+       }
+            
+        const productdata = await product.findById(productId)
 
         const generateRandomNumber = () => {
             let randomNum = Math.floor(Math.random() * 100000000);
@@ -13,7 +22,8 @@ const addOrder = async(req,res,next)=>{
         
             return randomNum;
         }; 
-
+        
+       
         const payload = {
             userId:userId,
             productId:productId,
@@ -24,6 +34,11 @@ const addOrder = async(req,res,next)=>{
             randomOrderNumber:`Order_${generateRandomNumber()}`,
             phoneNumber:phoneNumber
         }
+
+         if(productdata.isEngraving === true) {
+            payload.Engraving = Engraving
+         }
+        
         let orderData = await order.create(payload)
 
         return res.status(200).send({
@@ -31,9 +46,10 @@ const addOrder = async(req,res,next)=>{
             payload:orderData
         })
     } catch (error) {
+        console.log(error)
         return res.status(200).send(error);
     }
-}
+} 
 
 const getOrder = async(req,res,next)=>{
     try {
