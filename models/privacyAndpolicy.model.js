@@ -13,7 +13,14 @@ const privacyAndPolicySchema = new Schema(
         description: {
             type: String,
         },
-        
+        isDeleted: {
+            type: Boolean,
+            default: false,
+        }
+    },
+    {
+        timestamps: true,
+        versionKey: false,
     }
 )
 

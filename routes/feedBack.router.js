@@ -9,10 +9,33 @@ const {
     ENUM: { ROLE },
 } = require("../helpers/constant.helper")
 
-router.route("/").post(auth({ usersAllowed: [ROLE.USER] }),feedBack.createFeedBack),
-router.route("/").get(feedBack.getFeedBack),
-router.route("/").put(auth({ usersAllowed: [ROLE.USER] }),feedBack.updateFeedBack),
-router.route("/").delete(auth({ usersAllowed: [ROLE.USER] }),feedBack.deleteFeedBack)
+const {
+    FEED_BACK: { VALIDATOR },
+  } = require("../controllers");
+
+router.route("/").post(
+  auth({ usersAllowed: [ROLE.USER] }),
+  VALIDATOR.createFeedBack,
+  feedBack.createFeedBack
+);
+
+router.route("/").get(
+  auth({ usersAllowed: [ROLE.USER , ROLE.ADMIN] }),
+  VALIDATOR.getFeedBack,
+  feedBack.getFeedBack
+);
+
+router.route("/").put(
+  auth({ usersAllowed: [ROLE.USER] }),
+  VALIDATOR.updateFeedBack,
+  feedBack.updateFeedBack
+);
+
+router.route("/").delete(
+  auth({ usersAllowed: [ROLE.USER] }),
+  VALIDATOR.deleteFeedBack,
+  feedBack.deleteFeedBack
+);
 
 
 

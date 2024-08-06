@@ -25,7 +25,15 @@ const shippingPolicySchema = new Schema(
                     type: Number,
                 }
             },
-        ]
+        ],
+        isDeleted: {
+            type: Boolean,
+            default: false,
+        }
+    },
+    {
+        timestamps: true,
+        versionKey: false,
     }
 )
 

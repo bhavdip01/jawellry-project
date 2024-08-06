@@ -43,7 +43,7 @@ module.exports = {
       name: Joi.string().lowercase().trim(),
       description: Joi.string().trim(),
       price: Joi.number(),
-      categoryId: Joi.array().items(Joi.string()),
+      categoryIds: Joi.array().items(Joi.string()),
       subCategoryIds: Joi.array().items(Joi.string()),
       sku: Joi.string(),
       personalization: Joi.string(),

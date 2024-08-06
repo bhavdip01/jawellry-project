@@ -1,4 +1,5 @@
 const Address = require("../../models/address.model");
+const {MESSAGE} = require("../../helpers/constant.helper")
 
 const addAddress = async (req, res, next) => {
   try {
@@ -18,60 +19,58 @@ const addAddress = async (req, res, next) => {
     let addressData = await Address.create(payload);
 
     return res.status(200).send({
-      message: "address data successfully",
+      message: MESSAGE.SUCCESS,
       payload: addressData,
     });
   } catch (error) {
-    return res.status(200).send(error);
+    return res.status(500).send(error);
   }
 };
 
 const getAddress = async (req, res, next) => {
   try {
     const { user_id, addresstype, city, page, limit } = req.query;
-    let addressData;
-
     let skip = (page - 1) * limit;
 
+    let query = {isDeleted: false}
     if (user_id) {
-      addressData = await Address.find({ userId: user_id })
-        .skip(skip)
-        .limit(limit)
-        .populate({
-          path: "userId",
-          model: "User",
-        });
-    } else if (addresstype) {
-      addressData = await Address.find({ addressType: addresstype })
-        .populate({
-          path: "userId",
-          model: "User",
-        })
-        .skip(skip)
-        .limit(limit);
-    } else if (city) {
-      addressData = await Address.find({ city: city })
-        .populate({
-          path: "userId",
-          model: "User",
-        })
-        .skip(skip)
-        .limit(limit);
+      query = { userId: user_id}
+    }
+    if (addresstype) {
+      query = { addressType: addresstype}
+
+    }
+    if (city) {
+      query = { city: city}
+
     }
 
+    let addressData = await Address.find(query).skip(skip).limit(limit)
+    .populate({
+      path: 'userId',
+      model: 'User'
+    })
+
     return res.status(200).send({
-      message: "addressData fetch successfully",
+      message:  MESSAGE.FETCH_SUCCESSFULLY,
       payload: addressData,
     });
+
   } catch (error) {
-    return res.status(200).send(error);
+    return res.status(500).send(error);
   }
 };
 
 const updateAddress = async (req, res, next) => {
   try {
-    console.log(req.query);
     const { id } = req.query;
+
+    const checkAddress = await Address.findOne({_id: id})
+    if (!checkAddress) {
+      return res.status(404).send({
+        message: MESSAGE.NOT_FOUND
+      });
+    }
 
     const payload = {
       address: req.body.address,
@@ -94,27 +93,32 @@ const updateAddress = async (req, res, next) => {
     );
 
     return res.status(200).send({
-      message: "address Data updated successfully",
+      message:  MESSAGE.UPDATED_SUCCESSFULLY,
       payload: addressData,
     });
+
   } catch (error) {
-    console.log(error);
-    return res.status(200).send(error);
+    return res.status(500).send(error);
   }
 };
 
 const deleteAddress = async (req, res, next) => {
   try {
     const { id } = req.query;
-    await Address.findOneAndDelete({
-      _id: id,
-    });
+
+    const checkAddress = await Address.findOne({_id: id, isDeleted: false})
+    if (!checkAddress) {
+      return res.status(404).send({
+        message: MESSAGE.NOT_FOUND
+      });
+    }
+    await Address.findOneAndUpdate({_id: id},{$set: {isDeleted: true}},{new: true});
 
     return res.status(200).send({
-      message: "address deleted successfully",
+      message:  MESSAGE.DELETED_SUCCESSFULLY,
     });
   } catch (error) {
-    return res.status(200).send(error);
+    return res.status(500).send(error);
   }
 };
 module.exports = {

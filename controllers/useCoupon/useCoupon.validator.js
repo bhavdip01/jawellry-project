@@ -1,18 +1,19 @@
 const Joi = require("joi");
-const { create } = require("../addToCart/addToCart.validator");
 
 const validator = require("../../middleware/validator").validator;
 
 module.exports = {
-    create:validator({
+    createUseCoupon:validator({
         body:Joi.object({
-            couponId: Joi.array().items(Joi.string()).required(),  
-            userId: Joi.array().items(Joi.string()).required(),
+            couponId: Joi.string(),  
+            userId: Joi.string(),
         }),
     }),
-    get:validator({
+    getUseCoupon:validator({
     query: Joi.object({
             id: Joi.string(),
+            page: Joi.number(),
+            limit: Joi.number(),
         }),
     }),
 }

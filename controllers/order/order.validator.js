@@ -4,31 +4,30 @@ const { query } = require("winston");
 const validator = require("../../middleware/validator").validator;
 
 module.exports = {
-    create:validator({
+    addOrder:validator({
         body:Joi.object({
-            userId: Joi.array().items(Joi.string()).required(),
-            productId: Joi.array().items(Joi.string()).required(),
-            addToCartId: Joi.array().items(Joi.string()).required(),
-            couponId: Joi.array().items(Joi.string()).required(),
-            addressId: Joi.array().items(Joi.string()).required(),
-            orderStatus: Joi.string(),
-            phoneNumber: Joi.string()
-            .pattern(/^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/)
-            .message('Invalid phone Number')
-            .required()
+            userId: Joi.string(),
+            productId: Joi.array().items(Joi.string()),
+            addToCartId: Joi.string(),
+            couponId: Joi.string(),
+            addressId: Joi.string(),
+            phoneNumber: Joi.number()
+            // .pattern(/^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/)
+            // .message('Invalid phone Number')
+            // .required()
         }),
     }),
-    get:validator({
+    getOrder:validator({
         query:Joi.object({
             id:Joi.string(),
             user_id:Joi.string(),
             search: Joi.string().trim(),
-            orderstatus:Joi.string().trim,
+            orderStatus:Joi.string(),
             page:Joi.string(),
             limit:Joi.string(),
         }),
     }),
-    update:validator({
+    updateOrder:validator({
         query:Joi.object({
             id:Joi.string(),
         }),

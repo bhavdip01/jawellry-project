@@ -18,6 +18,10 @@ const useCouponSchema = new Schema(
             ref: "User",
             required: true
         }
+    },
+    {
+        timestamps: true,
+        versionKey: false,
     }
 )
 

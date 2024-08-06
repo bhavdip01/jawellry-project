@@ -40,7 +40,15 @@ const meetingSchema = new Schema(
         endTime: {
             type: String,
             default: true
+        },
+        isDeleted: {
+            type: Boolean,
+            default: false,
         }
+    },
+    {
+        timestamps: true,
+        versionKey: false,
     }
 )
 

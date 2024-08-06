@@ -1,4 +1,6 @@
+const { query } = require("winston")
 const meeting = require("../../models/meeting.model")
+const { MESSAGE } = require("../../helpers/constant.helper")
 
 
 const createMeeting = async(req,res)=>{
@@ -20,11 +22,10 @@ const createMeeting = async(req,res)=>{
         let couponData = await meeting.create(payload)
 
         return res.status(200).send({
-            message:"meetingData create successfully",
+            message: MESSAGE.SUCCESS,
             payload:couponData
         })
     } catch (error) {
-        console.log(error)
         return res.status(500).send({error})
     }
 }
@@ -33,30 +34,30 @@ const getMeeting = async(req,res) =>{
     try {
         
         const {id,userid,startDate,endDate,page,limit} = req.query
-        let meetingData
         let skip = (page -1) * limit
 
+        let query = {isDeleted: false}
         if(id){
-            meetingData = await meeting.findOne({_id:id})
+            query = { _id: id}
         }
-        else if(userid){
-            meetingData = await meeting.find({userId:userid}).skip(skip).limit(limit)
+        if(userid){
+            query = {userId: userid}
         }
-        else if(startDate, endDate){
-            meetingData = await meeting.find({$or: 
-                [{startDate:startDate},
-                {endDate:endDate}]}).skip(skip).limit(limit)
-        }
-        else{
-            meetingData = await meeting.find().skip(skip).limit(limit)
+        if(startDate, endDate){
+            query = {startDate:{$gte:startDate}, endDate:{$lte:endDate}}
         }
 
+        let meetingData = await meeting.find(query).skip(skip).limit(limit)
+        .populate({
+            path: 'userId',
+            model: 'User'
+        })
+
         return res.status(200).send({
-            message:"meetingData fetch successfully",
+            message: MESSAGE.FETCH_SUCCESSFULLY,
             payload:meetingData
         })
     } catch (error) {
-        console.log(error)
         return res.status(500).send({error})
     }
 }
@@ -64,10 +65,14 @@ const getMeeting = async(req,res) =>{
 const updateMetting = async(req,res) =>{
     try {
         const {id} = req.query
-        
-        const status = await meeting.find({status:"Rejected"})
      
+        let checkMeeting = await meeting.findOne({ _id: id, isDeleted: false })
+        if(!checkMeeting){
+            return res.status(404).send({message: MESSAGE.NOT_FOUND})
+        }
 
+        const status = await meeting.findOne({status:"Rejected"})
+        
         const payload = {
             title:req.body.title,
             description:req.body.description,
@@ -86,7 +91,7 @@ const updateMetting = async(req,res) =>{
             )
         
             return res.status(200).send({
-                message:"meetingData updated successfully",
+                message: MESSAGE.UPDATED_SUCCESSFULLY,
                 payload:meetingData
             })
         }
@@ -101,12 +106,15 @@ const deleteMeeting = async(req,res) =>{
     try {
         const {id} = req.query
 
-        await meeting.findOneAndDelete({
-            _id:id}
-        )
+        let checkMeeting = await meeting.findOne({ _id: id, isDeleted: false })
+        if(!checkMeeting){
+            return res.status(404).send({message: MESSAGE.NOT_FOUND})
+        }
+
+        await meeting.findOneAndUpdate({_id:id},{$set: {isDeleted:true}}, {new: true})
 
         return res.status(200).send({
-            message:"meetingData deleted successfully"
+            message: MESSAGE.DELETED_SUCCESSFULLY,
         })
 
     } catch (error) {
@@ -117,6 +125,12 @@ const deleteMeeting = async(req,res) =>{
 const meetingStatusUpdate = async(req, res) => {
     try {
         const {id} = req.query
+
+        let checkMeeting = await meeting.findOne({ _id: id, isDeleted: false })
+        if(!checkMeeting){
+            return res.status(404).send({message: MESSAGE.NOT_FOUND})
+        }
+
         const payload = {
             status:req.body.status,
             reason:req.body.reason
@@ -127,7 +141,7 @@ const meetingStatusUpdate = async(req, res) => {
         )
 
         return res.status(200).send({
-            message:"meetingData updated successfully",
+            message: MESSAGE.UPDATED_SUCCESSFULLY,
             payload:meetingStatus
         })
     } catch (error) {

@@ -1,4 +1,5 @@
 const useCoupon = require("../../models/useCoupon.model")
+const { MESSAGE } = require("../../helpers/constant.helper")
 
 const createUseCoupon = async(req,res,next)=>{
     try {
@@ -12,35 +13,41 @@ const createUseCoupon = async(req,res,next)=>{
         let useCouponData = await useCoupon.create(payload)
 
         return res.status(200).send({
-            message:"useCoupon Data create successfuly",
+            message: MESSAGE.SUCCESS,
             payload:useCouponData
         })
     } catch (error) {
-        return res.status(200).send(error);
+        return res.status(500).send(error);
     }
 }
 
 const getUseCoupon = async(req,res,next)=>{
     try {
         
-        const { id } = req.query
+        const { id,page,limit} = req.query
+        let skip = (page -1) * limit
 
-        let useCouponData = await useCoupon.findOne({_id : id})
-        // .populate({
-        //     path: 'couponId',
-        //     model: 'coupon'
-        // })
-        // .populate({
-        //     path: 'userId',
-        //     model: 'User'
-        // });
+        let query = {}
+        if(id){
+            query = {_id:id}
+        }
+
+        let useCouponData = await useCoupon.find(query).skip(skip).limit(limit)
+        .populate({
+            path: 'couponId',
+            model: 'coupon'
+        })
+        .populate({
+            path: 'userId',
+            model: 'User'
+        });
         
         return res.status(200).send({
-            message:"useCouponData fetch successfully",
+            message: MESSAGE.FETCH_SUCCESSFULLY,
             payload:useCouponData
         })
     } catch (error) {
-        return res.status(200).send(error);
+        return res.status(500).send(error);
     }
 }
 

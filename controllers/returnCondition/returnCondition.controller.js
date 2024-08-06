@@ -1,4 +1,5 @@
 const returnCondition = require("../../models/returnCondition.model");
+const { MESSAGE } = require("../../helpers/constant.helper")
 
 const createReturnCondition = async (req, res) => {
   try {
@@ -12,7 +13,7 @@ const createReturnCondition = async (req, res) => {
     let returnConditionData = await returnCondition.create(payload);
 
     return res.status(200).send({
-      message: "returnConditionData created successfully",
+      message: MESSAGE.SUCCESS,
       payload: returnConditionData,
     });
   } catch (error) {
@@ -23,23 +24,26 @@ const createReturnCondition = async (req, res) => {
 const getReturnCondition = async (req, res) => {
   try {
     const { id, title, page, limit } = req.query;
-    let returnConditionData;
     let skip = (page - 1) * limit;
-    let query = {};
+
+    let query = {isDeleted: false};
     if (id) {
       query = { _id: id };
-    } else if (title) {
+    } 
+    if (title) {
       query = { title: title };
     }
-    returnConditionData = await returnCondition
+
+    let returnConditionData = await returnCondition
       .find(query)
       .skip(skip)
       .limit(limit);
 
     return res.status(200).send({
-      message: "returnConditionData fetched successfully",
+      message: MESSAGE.FETCH_SUCCESSFULLY,
       payload: returnConditionData,
     });
+
   } catch (error) {
     return res.status(500).send(error);
   }
@@ -48,6 +52,11 @@ const getReturnCondition = async (req, res) => {
 const updateReturnCondition = async (req, res) => {
   try {
     const { id } = req.query;
+
+    let checkReturnCondition = await returnCondition.findOne({_id: id, isDeleted: false});
+    if (!checkReturnCondition) {
+      return res.status(404).send({ message: MESSAGE.NOT_FOUND });
+    }
 
     const payload = {
       title: req.body.title,
@@ -61,9 +70,10 @@ const updateReturnCondition = async (req, res) => {
     );
 
     return res.status(200).send({
-      message: "returnConditionData updated successfully",
+      message: MESSAGE.UPDATED_SUCCESSFULLY,
       payload: returnConditionData,
     });
+
   } catch (error) {
     return res.status(500).send(error);
   }
@@ -73,12 +83,15 @@ const deleteReturnCondition = async (req, res) => {
   try {
     const { id } = req.query;
 
-    await returnCondition.findOneAndDelete({
-      _id: id,
-    });
+    let checkReturnCondition = await returnCondition.findOne({_id: id, isDeleted: false});
+    if (!checkReturnCondition) {
+      return res.status(404).send({ message: MESSAGE.NOT_FOUND });
+    }
+
+    await returnCondition.findOneAndUpdate({_id: id},{$set: {isDeleted: true}},{new: true});
 
     return res.status(200).send({
-      message: "returnConditionData deleted successfully",
+      message: MESSAGE.DELETED_SUCCESSFULLY,
     });
   } catch (error) {
     return res.status(500).send(errq);

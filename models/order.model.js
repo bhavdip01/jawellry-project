@@ -49,6 +49,11 @@ const orderSchema = new Schema(
         phoneNumber: {
             type:Number
         }
+    },
+    {
+        timestamps: true,
+        versionKey: false,
+    
     }
 )
 

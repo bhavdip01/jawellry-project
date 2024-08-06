@@ -50,5 +50,10 @@ module.exports = {
     FILE_UPLOAD_SUCCESS: 'File uploaded successfully.',
     INVALID_FILE_TYPE: 'Invalid file type.',
     MULTER_ERROR: 'Multer error.',
+    FETCH_SUCCESSFULLY: 'Fetched successfully',
+    UPDATED_SUCCESSFULLY: 'Updated successfully.',
+    DELETED_SUCCESSFULLY: 'Deleted successfully.',
+    USE_COUPON: 'User already use coupon',
+    COUPON_CODE: 'Coupon code already exists!',
   },
 };

@@ -6,13 +6,12 @@ const { validate } = require("../../models/banner.model");
 const validator = require("../../middleware/validator").validator;
 
 module.exports = {
-  create: validator({
+  createBanner: validator({
     body: Joi.object({
-      name: Joi.string().lowercase().trim().required(),
+      name: Joi.string().lowercase().trim(),
       description: Joi.string().trim(),
       isMain: Joi.boolean(),
       isDeleted: Joi.boolean(),
-      imageId: Joi.array().items(Joi.string()).required(),
     }),
   }),
   getBanner: validator({
@@ -29,14 +28,24 @@ module.exports = {
         id:Joi.string(),
     }),
     body:Joi.object({
-        name: Joi.string().lowercase().trim().required(),
+        name: Joi.string().lowercase().trim(),
         description: Joi.string().trim(),
         isMain: Joi.boolean(),
     }),
   }),
   deleteBanner: validator({
     query: Joi.object({
-      id: Joi.string().required(),
+      bannerId: Joi.string()
     }),
   }),
+  addBanner: validator({
+    body: Joi.object({
+      name: Joi.string().lowercase().trim(),
+    }),
+  }),
+  removeBannerimage: validator({
+    query: Joi.object({
+      _id: Joi.string().required(),
+    }),
+  })
 };

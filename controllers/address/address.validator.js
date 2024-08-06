@@ -4,7 +4,7 @@ const { query } = require("winston");
 const validator = require("../../middleware/validator").validator;
 
 module.exports = {
-    create:validator({
+    addAddress:validator({
         body:Joi.object({
             address:Joi.string(),
             addressType:Joi.string(),
@@ -12,17 +12,19 @@ module.exports = {
             state:Joi.string(),
             country:Joi.string(),
             pinCode:Joi.number().required(),
-            userId: Joi.array().items(Joi.string()).required()
+            userId: Joi.string(),
         }),
     }),
-    get:validator({
+    getAddress:validator({
         query:Joi.object({
             user_id:Joi.string(),
+            addresstype:Joi.string(),
+            city:Joi.string(),
             page:Joi.string(),
             limit:Joi.string(),
         }),
     }),
-    update:validator({
+    updateAddress:validator({
         query:Joi.object({
             id:Joi.string(),
         }),
@@ -35,7 +37,7 @@ module.exports = {
             pinCode:Joi.number().required()
         }),
     }),
-    delete: validator({
+    deleteAddress: validator({
         query: Joi.object({
           id: Joi.string(),
       }),

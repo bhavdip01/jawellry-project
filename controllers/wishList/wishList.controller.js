@@ -1,5 +1,6 @@
 const mongoose = require("mongoose")
 const wishList = require("../../models/wishList.model")
+const { MESSAGE }  = require("../../helpers/constant.helper")
 
 const createWishList = async(req,res,next)=>{
 
@@ -15,11 +16,11 @@ const createWishList = async(req,res,next)=>{
         let wishListData = await wishList.create(payload)
 
         return res.status(200).send({
-            message:"wishList product successfully",
+            message: MESSAGE.SUCCESS,
             payload:wishListData
         })
     } catch (error) {
-        return res.status(200).send(error);
+        return res.status(500).send(error);
     }
 }
 
@@ -29,48 +30,36 @@ const getWishList = async(req,res,next)=>{
         const  { id,userid,page,limit} = req.query
         const skip = (page - 1) * limit;
 
-        if(!mongoose.Types.ObjectId.isValid(id) && !mongoose.Types.ObjectId.isValid(userid)){
-            return res.status(400).send({
-                message:"Id is required"
-            })
+        let query = {isDeleted: false}
+        // if(!mongoose.Types.ObjectId.isValid(id) && !mongoose.Types.ObjectId.isValid(userid)){
+        //     return res.status(400).send({
+        //         message:"Id is required"
+        //     })
+        // }
+        if(id){
+            query = { _id: id}
         }
-        else if(id){
-            let wishListData = await wishList.findOne({ _id: id})
-            
-            .populate({
-                path: 'productId',
-                model: 'Product'
-            })
-            .populate({
-                path: 'userId',
-                model: 'User'
-            });
-
-            return res.status(200).send({
-                message:"wishList product successfully",
-                payload:wishListData
-            })
-
+        if(userid){
+            query = {userId : userid}
         }
-        else if(userid){
-            let wishListData = await wishList.find({ userId: userid}).skip(skip).limit(limit)
-            .populate({
-                path: 'productId',
-                model: 'Product'
-            })
-            .populate({
-                path: 'userId',
-                model: 'User'
-            });
 
-            return res.status(200).send({
-                message:"wishList product successfully",
-                payload:wishListData
-            })
-        }
+        let wishListData = await wishList.find(query).skip(skip).limit(limit)
+        .populate({
+            path: 'productId',
+            model:"Product"
+        })
+        .populate({
+            path: 'userId',
+            model:"User"
+        })
+
+        return res.status(200).send({
+            message: MESSAGE.FETCH_SUCCESSFULLY,
+            payload:wishListData
+        })
         
     } catch (error) {
-        return res.status(200).send(error);
+        return res.status(500).send(error);
     }
 }
 
@@ -83,12 +72,12 @@ const deleteWishList = async(req,res,next)=>{
         })
 
         return res.status(200).send({
-            message:"product delete successfully",
+            message: MESSAGE.DELETED_SUCCESSFULLY,
             
         })
 
     } catch (error) {
-        return res.status(200).send(error);
+        return res.status(500).send(error);
     }
 }
 

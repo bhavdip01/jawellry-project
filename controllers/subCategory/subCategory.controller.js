@@ -13,7 +13,17 @@ const controllers = {
         message: MESSAGE.ALREADY_EXISTS,
         payload: { name: req.body.name },
       });
-
+    
+    const category = await DB.CATEGORY.findOne({ _id: req.body.categoryId, isActive: true})
+    if(!category) {
+      return res.status(400).send({
+          code:400,
+          success: false,
+          message: MESSAGE.NOT_FOUND,
+          data: {}
+      })
+    }
+      
     //* create subCategory
     await DB.SUB_CATEGORY.create(req.body);
 
@@ -41,7 +51,11 @@ const controllers = {
     if (req.query.categoryId) {
       query = {categoryId:req.query.categoryId}
     }
-    const subCategoryExists = await DB.SUB_CATEGORY.find(query).skip(skip).limit(limit);
+    const subCategoryExists = await DB.SUB_CATEGORY.find(query).skip(skip).limit(limit)
+    .populate({
+      path:"categoryId",
+      model:"Category"
+    });
     if (!subCategoryExists)
       return response.NO_CONTENT_FOUND({
         res,

@@ -1,15 +1,16 @@
 const order = require("../../models/order.model")
 const product = require("../../models/product.model")
+const { MESSAGE } = require("../../helpers/constant.helper") 
 
 const addOrder = async(req,res,next)=>{
     try {
 
         const {userId,productId,addToCartId,couponId,addressId,orderStatus,phoneNumber,Engraving} = req.body
-        
-       const checkUseCoupon = await order.findOne({usedId: userId, couponId: couponId})
-       if(checkUseCoupon){
-        return res.status(200).send("user already use this coupon")
-       }
+            
+        const checkUseCoupon = await order.findOne({usedId: userId, couponId: couponId})
+        if(checkUseCoupon){
+            return res.status(200).send({ message: MESSAGE.USE_COUPON})
+        }
             
         const productdata = await product.findById(productId)
 
@@ -42,88 +43,80 @@ const addOrder = async(req,res,next)=>{
         let orderData = await order.create(payload)
 
         return res.status(200).send({
-            message:"oeder created successfully",
+            message: MESSAGE.SUCCESS,
             payload:orderData
         })
     } catch (error) {
-        console.log(error)
-        return res.status(200).send(error);
+        return res.status(500).send(error);
     }
 } 
 
 const getOrder = async(req,res,next)=>{
     try {
         const {id,user_id,search,orderStatus,page,limit} = req.query
-        let orderData
         let skip = (page -1) * limit
         
+        let query = {}
         if(id){
-            orderData = await order.findOne({_id : id})
-            .populate({
-                path: 'productId',
-                model: 'Product'
-            })
-            .populate({
-                path:"userId",
-                model:"User"
-            })
-            .populate({
-                path: 'addToCartId',
-                model: 'addToCart'
-            })
-            .populate({
-                path:"couponId",
-                model:"coupon"
-            })
-            .populate({
-                path:"addressId",
-                model:"address"
-            })
+            query = { _id: id}
         }
-        else if(user_id){
-            orderData = await order.find({userId : user_id}).skip(skip).limit(limit)
-            .populate({
-                path: 'productId',
-                model: 'Product'
-            })
-            .populate({
-                path:"userId",
-                model:"User"
-            })
-            .populate({
-                path: 'addToCartId',
-                model: 'addToCart'
-            })
-            .populate({
-                path:"couponId",
-                model:"coupon"
-            })
-            .populate({
-                path:"addressId",
-                model:"address"
-            })
+        if(user_id){
+            query = { userId: user_id}
+            
         }
-        else if(search && search != ''){ 
+        if(search){
+            query = { randomOrderNumber : {$regex : search}}
+        }
+        if(orderStatus){
+            query = { orderStatus : orderStatus}
+        }
+       
+        let orderData = await order.find(query).skip(skip).limit(limit)
+        .populate({
+            path: 'productId',
+            model: 'Product',
+            select: "name quantity price -_id"
+        })
+        .populate({
+            path:"userId",
+            model:"User",
+            select: "firstName lastName email -_id"
+        })
+        .populate({
+            path: 'addToCartId',
+            model: 'addToCart',
+            select: "quantity -_id"
+        })
+        .populate({
+            path:"couponId",
+            model:"coupon",
+            select: "couponName discountType couponCode amoount -_id"
+        })
+        .populate({
+            path:"addressId",
+            model:"address",
+            select: "address addressType city pincode -_id"
+        })
 
-            orderData = await order.find({randomOrderNumber : {$regex : search}}).skip(skip).limit(limit)
-        }
-        else if(orderStatus){
-            orderData = await order.find({orderStatus : orderStatus}).skip(skip).limit(limit)
-        }
         return res.status(200).send({
-            message:"orderData fetch successfully",
+            message: MESSAGE.FETCH_SUCCESSFULLY,
             payload:orderData
         })
 
      
     } catch (error) {
-        return res.status(200).send(error)
+        return res.status(500).send(error)
     }
 }
 
 const updateOrder = async(req,res,next)=>{
     try {
         const {id} = req.query
+
+        let checkOrder = await order.findOne({ _id: id})
+        if(!checkOrder){
+            return res.status(404).send({ message: MESSAGE.NOT_FOUND})
+        }
 
         const payload = {
             orderStatus:req.body.orderStatus
@@ -142,11 +135,11 @@ const updateOrder = async(req,res,next)=>{
         )
 
         return res.status(200).send({
-            message:"order updated successfully",
+            message: MESSAGE.UPDATED_SUCCESSFULLY,
             payload:orderData
         })
     } catch (error) {
-        return res.status(200).send(error);
+        return res.status(500).send(error);
     }
 }
 

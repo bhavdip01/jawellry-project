@@ -8,8 +8,21 @@ const {
     ENUM: { ROLE },
 } = require("../helpers/constant.helper")
 
-router.route("/addUseCoupon").post(auth({ usersAllowed: [ROLE.USER] }),useCoupon.createUseCoupon);
-router.route("/getUseCoupon").get(useCoupon.getUseCoupon)
+const {
+    USE_COUPON: { VALIDATOR },
+  } = require("../controllers");
+
+router.route("/addUseCoupon").post(
+  auth({ usersAllowed: [ROLE.USER] }),
+  VALIDATOR.createUseCoupon,
+  useCoupon.createUseCoupon
+);
+
+router.route("/getUseCoupon").get(
+  auth({ usersAllowed: [ROLE.USER , ROLE.ADMIN] }),
+  VALIDATOR.getUseCoupon,
+  useCoupon.getUseCoupon
+);
 
 
 

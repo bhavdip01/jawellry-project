@@ -1,29 +1,30 @@
 const { response } = require("../../helpers");
 const banner = require("../../models/banner.model")
 const image = require("../../models/image.model")
+const { MESSAGE } = require("../../helpers/constant.helper")
 const fs = require("fs");
 const port = process.env.PORT
 
 
-const createBanner = async (req,res) => {
+const createBanner = async (req, res) => {
     try {
 
-        const bannerExists = await banner.findOne({ name: req.body.name})
-        if(bannerExists) {
-            return res.send("banner already exists!")
+        const bannerExists = await banner.findOne({ name: req.body.name })
+        if (bannerExists) {
+            return res.send({ message: MESSAGE.ALREADY_EXISTS })
         }
-        const imagesData = await Promise.all(req.files.map(async (file) =>{
-        const {size,mimetype,path,filename} = file
-        const publicIndex = path.indexOf('/Public');
-        let imagePath = path.substring(publicIndex);
+        const imagesData = await Promise.all(req.files.map(async (file) => {
+            const { size, mimetype, path, filename } = file
+            const publicIndex = path.indexOf('/Public');
+            let imagePath = path.substring(publicIndex);
 
-        const payload = {
-            image:`https://localhost:${port}${imagePath}`,
-            imageName:filename,
-            mimetype:mimetype,
-            size:size,
-            path:path
-        }
+            const payload = {
+                image: `https://localhost:${port}${imagePath}`,
+                imageName: filename,
+                mimetype: mimetype,
+                size: size,
+                path: path
+            }
             return await image.create(payload)
         }));
 
@@ -35,80 +36,80 @@ const createBanner = async (req,res) => {
         //     name:name,
         //     description:description
         // }
-        
+
         let bannerData = await banner.create(req.body);
 
         return res.status(200).send({
-            message:"bannerData create successfully",
-            payload:bannerData
+            message: MESSAGE.SUCCESS,
+            payload: bannerData
         })
     } catch (error) {
-        console.log(error)
-        return res.status(500).send({error})
-    }   
+        return res.status(500).send({ error })
+    }
 }
 
 const getBanner = async (req, res) => {
     try {
-        const {id,name,ismain,page,limit} = req.query
-        let bannerdata
-        let skip = (page -1) * limit
+        const { id, name, ismain, page, limit } = req.query
+        let skip = (page - 1) * limit
 
-        if(id){     
-            bannerdata = await banner.findOne({
-                _id:id
-            })
+        let query = { isDeleted: false }
+        if (id) {
+            query = { _id: id }
         }
-        else if(name){
-            bannerdata = await banner.findOne({
-                name:name
-            }).skip(skip).limit(limit)
+        else if (name) {
+            query = { name: name }
         }
-        else if(ismain){
-            bannerdata = await banner.find({
-                isMain:ismain
-            }).skip(skip).limit(limit)
+        else if (ismain) {
+            query = { isMain: ismain }
         }
-        
+
+        let bannerdata = await banner.find(query).skip(skip).limit(limit)
+
         return res.status(200).send({
-            message:"bannerData create successfully",
-            payload:bannerdata
+            message: MESSAGE.FETCH_SUCCESSFULLY,
+            payload: bannerdata
         })
     } catch (error) {
-        return res.status(500).send({error})
+        return res.status(500).send({ error })
     }
-    
+
 }
 
 const updateBanner = async (req, res) => {
     try {
-        const {id} = req.query
+        const { id } = req.query
+
+        let checkBanner = await banner.findOne({ _id: id })
+        if (!checkBanner) {
+            return res.status(404).send({ message: MESSAGE.NOT_FOUND })
+        }
 
         const payload = {
-            name:req.body.name,
-            description:req.body.description,
-            isMain:req.body.isMain
+            name: req.body.name,
+            description: req.body.description,
+            isMain: req.body.isMain
         }
 
         let bannerData = await banner.findOneAndUpdate(
             {
-                _id:id
+                _id: id
             },
             {
-                $set : payload
+                $set: payload
             },
             {
-                new:true
+                new: true
             }
         )
 
         return res.status(200).send({
-            message:"bannerData create successfully",
-            payload:bannerData
+            message: MESSAGE.UPDATED_SUCCESSFULLY,
+            payload: bannerData
         })
     } catch (error) {
         console.log(error)
-        return res.status(500).send({error})
+        return res.status(500).send({ error })
     }
 }
 
@@ -117,14 +118,12 @@ const deleteBanner = async (req, res) => {
 
     try {
 
-        const banners = await banner.findById(bannerId);
+        const banners = await banner.findOne({ _id: bannerId });
         const imageId = banners.imageId;
-        // console.log("======>11",imageId)
 
 
         const images = await image.findById(imageId);
         const imagePath = images.path;
-        // console.log("======>22",imagePath)
 
         if (fs.existsSync(imagePath)) {
             fs.unlink(imagePath, (err) => {
@@ -134,37 +133,35 @@ const deleteBanner = async (req, res) => {
             });
         }
 
-            await image.findOneAndDelete(imageId);
-        // console.log("======>23",aas)
+        await image.findOneAndDelete(imageId);
 
-    
-            await banner.findOneAndDelete(bannerId);
-        // console.log("======>23",vgc)
+        await banner.findOneAndDelete(bannerId);
 
         return res.status(200).send({
-            message: "Deleted successfully",
+            message: MESSAGE.DELETED_SUCCESSFULLY,
         });
+
     } catch (error) {
-        return res.status(500).send({error});
+        return res.status(500).send({ error });
     }
 
 }
 
 const addBanner = async (req, res) => {
     try {
-        let bannerdata = await banner.findOne({ name: req.body.name});
-        console.log("=====>11",bannerdata)
-        const imagesData = await Promise.all(req.files.map(async (file) =>{
-            const {size,mimetype,path,filename} = file
+        let bannerdata = await banner.findOne({ name: req.body.name });
+
+        const imagesData = await Promise.all(req.files.map(async (file) => {
+            const { size, mimetype, path, filename } = file
             const publicIndex = path.indexOf('/Public');
             let imagePath = path.substring(publicIndex)
 
             const payload = {
-                image:`https://localhost:${port}${imagePath}`,
-                imageName:filename,
-                mimetype:mimetype,
-                size:size,
-                path:path,
+                image: `https://localhost:${port}${imagePath}`,
+                imageName: filename,
+                mimetype: mimetype,
+                size: size,
+                path: path,
             }
 
             const createbanner = await image.create(payload)
@@ -172,49 +169,51 @@ const addBanner = async (req, res) => {
         }));
 
         const imageIds = imagesData.map((img) => img._id);
-        console.log(imageIds);
 
         await banner.updateOne(
-            {_id:bannerdata._id},
-            {$set: {imageId :imageIds}},
+            { _id: bannerdata._id },
+            { $set: { imageId: imageIds } },
         );
 
-        bannerdata = await banner.findOne({_id:banner._id});
-        console.log("===>22",bannerdata);
+        bannerdata = await banner.findOne({ _id: banner._id });
 
         return res.status(200).send({
-            message:"bannerData create successfully",
-            payload:bannerdata
+            message: MESSAGE.SUCCESS,
+            payload: bannerdata
         })
     } catch (error) {
-        console.log(error);
-        return res.status(500).send({error})
+        return res.status(500).send({ error })
     }
 }
 
-const removeBannerimage = async(req, res) => {
-    const { _id } = req.query
-    const images = await image.findOne({_id })
-   
-    const imagePath = images.path
+const removeBannerimage = async (req, res) => {
+    try {
+        const { _id } = req.query
+        const images = await image.findOne({ _id })
+
+        const imagePath = images.path
 
 
-    await image.findOneAndDelete({_id})
-    await banner.updateMany(
-      {imageId: _id},   
-      {$unset : {imageId : _id}},
-    )
+        await image.findOneAndDelete({ _id })
+        await banner.updateMany(
+            { imageId: _id },
+            { $unset: { imageId: _id } },
+        )
 
-    if(fs.existsSync(imagePath)){
-     
-      fs.unlink(imagePath , (err)=>{
-       
-        console.log(err)
-      })
+        if (fs.existsSync(imagePath)) {
+
+            fs.unlink(imagePath, (err) => {
+
+                console.log(err)
+            })
+        }
+        return res.status(200).send({
+            message: MESSAGE.SUCCESS,
+        })
+    } catch (error) {
+        return res.status(500).send({ error })
     }
-    return res.status(200).send({
-        message:"deleted successfully",
-    })
+
 }
 
 

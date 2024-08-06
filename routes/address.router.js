@@ -8,10 +8,34 @@ const {
     ENUM: { ROLE },
 }= require("../helpers/constant.helper")
 
+const {
+    ADDRESS: { VALIDATOR },
+  } = require("../controllers");
 
-router.route("/addAddress").post(auth({ usersAllowed: [ROLE.USER] }),address.addAddress)
-router.route("/getAddress").get(address.getAddress)
-router.route("/updateAddress").put(auth({ usersAllowed: [ROLE.USER] }),address.updateAddress)
-router.route("/deleteAddress").delete(auth({ usersAllowed: [ROLE.USER] }),address.deleteAddress)
+
+router.route("/addAddress").post(
+  auth({ usersAllowed: [ROLE.USER] }),
+  VALIDATOR.addAddress,
+  address.addAddress
+);
+
+router.route("/getAddress").get(
+  auth({ usersAllowed: [ROLE.USER , ROLE.ADMIN] }),
+  VALIDATOR.getAddress, address.getAddress
+);
+
+router.route("/updateAddress").put(
+  auth({ usersAllowed: [ROLE.USER] }),
+  VALIDATOR.updateAddress,
+  address.updateAddress
+);
+
+router.route("/deleteAddress").delete(
+  auth({ usersAllowed: [ROLE.USER] }),
+  VALIDATOR.deleteAddress,
+  address.deleteAddress
+);
+
+
 
 module.exports = router

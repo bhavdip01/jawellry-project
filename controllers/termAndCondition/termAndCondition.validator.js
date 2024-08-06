@@ -3,13 +3,13 @@ const { query } = require("winston");
 const validator = require("../../middleware/validator").validator;
 
 module.exports = {
-    create:validator({
+    createTermAndCondition:validator({
         body:Joi.object({
             name:Joi.string(),
             description:Joi.string(),
         }),
     }),
-    get:validator({
+    getTermAndCondition:validator({
         query:Joi.object({
             id:Joi.string(),
             name:Joi.string(),
@@ -17,7 +17,7 @@ module.exports = {
             limit:Joi.string(),
         }),
     }),
-    update:validator({
+    updateTermAndCondition:validator({
         query:Joi.object({
             id:Joi.string(),
         }),
@@ -26,7 +26,7 @@ module.exports = {
             description:Joi.string(),
         }),
     }),
-    delete: validator({
+    deleteTermAndCondition: validator({
         query: Joi.object({
           id: Joi.string(),
       }),

@@ -1,15 +1,16 @@
 const shippingPolicy = require("../../models/shippingPolicy.model");
+const { MESSAGE } = require("../../helpers/constant.helper");
 
 const createShippingPolicy = async (req, res) => {
   try {
     let shippingPolicyData = await shippingPolicy.create(req.body);
 
     return res.status(200).send({
-      message: "shippingPolicy create successfully",
+      message:  MESSAGE.SUCCESS,
       payload: shippingPolicyData,
     });
+
   } catch (error) {
-    console.log(error);
     return res.status(500).send({ error });
   }
 };
@@ -18,25 +19,26 @@ const getShippingpolicy = async (req, res) => {
   try {
     const { id, title, page, limit } = req.query;
     let skip = (page - 1) * limit;
-    let shippingPolicyData;
-    let query;
+
+    let query = {isDeleted: false}
 
     if (id) {
       query = { _id: id };
-    } else if (title) {
+    }
+    if (title) {
       query = { title: title };
     }
-    shippingPolicyData = await shippingPolicy
+
+    let shippingPolicyData = await shippingPolicy
       .find(query)
       .skip(skip)
       .limit(limit);
 
     return res.status(200).send({
-      message: "shippingPolicy get successfully",
+      message:  MESSAGE.FETCH_SUCCESSFULLY,
       payload: shippingPolicyData,
     });
   } catch (error) {
-    console.log(error);
     return res.status(500).send({ error });
   }
 };
@@ -44,6 +46,13 @@ const getShippingpolicy = async (req, res) => {
 const updateShippingpolicy = async (req, res, next) => {
   try {
     const { id } = req.query;
+
+    const checkShippingPolicy = await shippingPolicy.findOne({ _id: id , isDeleted: false });
+    if(!checkShippingPolicy){
+      return res.status(404).send({
+        message: MESSAGE.NOT_FOUND,
+      });
+    }
 
     let shippingPolicyData = await shippingPolicy.findOneAndUpdate(
       {
@@ -57,28 +66,32 @@ const updateShippingpolicy = async (req, res, next) => {
       }
     );
     return res.status(200).send({
-      message: "shippingPolicy update successfully",
+      message: MESSAGE.UPDATED_SUCCESSFULLY,
       payload: shippingPolicyData,
     });
   } catch (error) {
-    console.log(error);
-    return res.status(200).send(error);
+    return res.status(500).send(error);
   }
 };
 
 const deleteShippingPolicy = async (req, res, next) => {
   try {
     const { id } = req.query;
-    await shippingPolicy.findOneAndDelete({
-      _id: id,
-    });
+
+    const checkShippingPolicy = await shippingPolicy.findOne({ _id: id, isDeleted: false});
+    if(!checkShippingPolicy){
+      return res.status(404).send({
+        message: MESSAGE.NOT_FOUND,
+      });
+    }
+
+    await shippingPolicy.findOneAndUpdate({_id: id},{$set : {isDeleted: true}}, {new: true});
 
     return res.status(200).send({
-      message: "shippingPolicy delete successfully",
+      message: MESSAGE.DELETED_SUCCESSFULLY,
     });
   } catch (error) {
-    console.log(error);
-    return res.status(200).send(error);
+    return res.status(500).send(error);
   }
 };
 

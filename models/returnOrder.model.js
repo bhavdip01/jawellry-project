@@ -32,6 +32,10 @@ const returnOrderSchema = new Schema(
             type: String,
             default: "approvalPending",
         }
+    },
+    {
+        timestamps: true,
+        versionKey: false,
     }
 )
 

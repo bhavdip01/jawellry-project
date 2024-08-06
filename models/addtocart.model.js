@@ -21,6 +21,10 @@ const addToCartSchema = new Schema(
             ref: "User",
             required:true
         },
+    },
+    {
+        timestamps: true,
+        versionKey: false
     }
 )
 

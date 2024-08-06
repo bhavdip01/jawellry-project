@@ -5,11 +5,10 @@ const validator = require("../../middleware/validator").validator;
 module.exports = {
     createReturnOrder: validator({
         body: Joi.object({
-            productId: Joi.string().required(),
-            orderId: Joi.string().required(),
-            pickupAddressId: Joi.string().required(),
-            description: Joi.string().required(),
-            status: Joi.string().required()
+            productId: Joi.string(),
+            orderId: Joi.string(),
+            pickupAddressId: Joi.string(),
+            description: Joi.string(),
         }),
     }),
     getReturnOrder: validator({
@@ -22,7 +21,7 @@ module.exports = {
             limit: Joi.number(),
         }),
     }),
-    returnOrderStatusUpdate: validator({
+    updateReturnOrderStatus: validator({
         query: Joi.object({
             id: Joi.string(),
         }),

@@ -5,7 +5,9 @@ const { MESSAGE } = require("../../helpers/constant.helper");
 const { response } = require("../../helpers");
 const categoryModel = require("../../models/category.model");
 const subCategoryModel = require("../../models/subCategory.model");
-const shippingPolicy = require("../../models/shippingPolicy.model")
+const shippingPolicy = require("../../models/shippingPolicy.model");
+const privacyAndPolicy = require("../../models/privacyAndpolicy.model");
+const termAndCondition = require("../../models/termAndCondition")
 const image = require("../../models/image.model")
 const fs = require("fs");
 const path = require('path')
@@ -17,7 +19,7 @@ const helpers = {};
 const controllers = {
 
   create: async (req, res) => {
-    // console.log("==========>",req.body)
+
     const productExists = await DB.PRODUCT.findOne({ name: req.body.name });
     if (productExists)
       return response.DUPLICATE_VALUE({
@@ -26,15 +28,54 @@ const controllers = {
         payload: { name: req.body.name },
       });
 
+    const category = await DB.CATEGORY.findOne({ _id: req.body.categoryIds, isActive: true })
+    if(!category){
+      return res.status(400).send({
+        code: 400,
+        success: false,
+        message: MESSAGE.NOT_FOUND,
+        data: {}
+      })
+    }
 
-    // console.log("===============>111",req.files)
+    const subCategory = await DB.SUB_CATEGORY.findOne({ _id: req.body.subCategoryIds, isActive: true })
+    if(!subCategory){
+      return res.status(400).send({
+        code: 400,
+        success: false,
+        message: MESSAGE.NOT_FOUND,
+        data: {}
+      })
+    }
+
+    const checkPrivacyAndPolicy = await privacyAndPolicy.findOne({ _id: req.body.privacyAndPolicyId, isDeleted: false })
+    if(!checkPrivacyAndPolicy){
+      return res.status(400).send({
+        code: 400,
+        success: false,
+        message: MESSAGE.NOT_FOUND,
+        data: {}
+      })
+    }
+
+    const checkTermAndCondition = await termAndCondition.findOne({ _id: req.body.termAndConditionId, isDeleted: false })
+    if(!checkTermAndCondition){
+      return res.status(400).send({
+        code: 400,
+        success: false,
+        message: MESSAGE.NOT_FOUND,
+        data: {}
+      })
+    }
+
+
 
     const imagesData = await Promise.all(req.files.map(async (file) => {
       const { size, mimetype, path, filename } = file
       const publicIndex = path.indexOf('/Public');
       let imagePath = path.substring(publicIndex);
 
-      // console.log("imagePath===>", imagePath)
+      
 
       const payload = {
         image: `http://localhost:${port}${imagePath}`,
@@ -162,6 +203,14 @@ const controllers = {
           path:"shippingPolicyId",
           model:"ShippingPolicy"
       })
+      .populate({
+          path:"categoryIds",
+          model:"Category"
+      })
+      .populate({
+          path:"subCategoryIds",
+          model:"subCategory"
+      })
       console.log("Products found:", products);
 
       if (products.length === 0) {
@@ -237,8 +286,6 @@ const controllers = {
     }));
     const imageIds = imagesData.map((img) => img._id)
 
-    // console.log("======================>im",imageIds)
-
     await DB.PRODUCT.updateOne(
       { _id: product._id },
       { $push: { imageIds: imageIds } }
@@ -246,7 +293,7 @@ const controllers = {
 
     product = await DB.PRODUCT.findOne({ _id: product._id })
 
-    // console.log("=============>PP",product)
+
     return response.OK({
       res,
       message: MESSAGE.SUCCESS,
@@ -260,14 +307,14 @@ const controllers = {
 
     const { productId } = req.query
     if (productId) {
-      const products = await DB.PRODUCT.findById(productId)
+      const products = await DB.PRODUCT.findOne({_id: productId})
       const imageId = products.imageIds
-      // console.log("===========>11",imageId)
+     
 
       if (imageId.length > 0) {
         const images = await image.find({ _id: { $in: imageId } })
         const imagePath = images.map(img => img.path)
-        // console.log("===========>22", imagePath);
+        
 
         for (const imagepaths of imagePath) {
           if (fs.existsSync(imagepaths)) {
@@ -289,7 +336,7 @@ const controllers = {
 
 
       return res.status(200).send({
-        message: "delete successfully"
+        message:  MESSAGE.DELETED_SUCCESSFULLY,
       })
     }
     else {
@@ -321,15 +368,14 @@ const controllers = {
 
     const images = await image.findOne({ _id })
     const imagePath = images.path
-    // console.log("=============>",imagePath)
+   
 
     await image.findOneAndDelete({ _id })
     await DB.PRODUCT.updateMany(
       { imageIds: _id },
       { $pull: { imageIds: _id } },
     )
-    // console.log("===============>fs",fs.existsSync(imagePath))
-    // console.log("===============>11",fs.unlinkSync(imagePath))
+
 
     if (fs.existsSync(imagePath)) {
 
@@ -351,7 +397,7 @@ const controllers = {
 
     // const productData = await DB.PRODUCT.find({subCategoryIds : {$in : product}})
     const productData = await DB.PRODUCT.aggregate([{ $match: { subCategoryIds: { $in: product } } }, { $sample: { size: 10 } }])
-    console.log("===========>22", productData)
+    // console.log("===========>22", productData)
 
     return response.OK({
       res,

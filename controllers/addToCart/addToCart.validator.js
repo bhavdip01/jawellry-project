@@ -3,14 +3,14 @@ const Joi = require("joi");
 const validator = require("../../middleware/validator").validator;
 
 module.exports = {
-    create:validator({
+    createAddToCart: validator({
         body:Joi.object({
           quantity: Joi.number(),
-          productId: Joi.array().items(Joi.string()).required(),  
-          userId: Joi.array().items(Joi.string()).required(),
+          productId: Joi.string(),  
+          userId: Joi.string(),
         }),
     }),
-    get: validator({
+    getAddToCart: validator({
       query: Joi.object({
         id: Joi.string(),
         userid:Joi.string(),
@@ -18,7 +18,7 @@ module.exports = {
         limit:Joi.string(),
       }),
     }),
-    update: validator({
+    updateAddToCart: validator({
       query: Joi.object({
         user_id: Joi.string(),
       }),
@@ -26,7 +26,7 @@ module.exports = {
         quantity: Joi.number(),
       }),
     }),
-    delete: validator({
+    deleteAddToCart: validator({
       query: Joi.object({
         product_Id: Joi.string(),
       }),

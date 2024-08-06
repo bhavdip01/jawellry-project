@@ -8,9 +8,28 @@ const {
     ENUM: { ROLE },
 } = require("../helpers/constant.helper")
 
-router.route("/addOrder").post(auth({ usersAllowed: [ROLE.USER] }),order.addOrder)
-router.route("/getOrder").get(order.getOrder)
-router.route("/updateOrder").put(auth({ usersAllowed: [ROLE.ADMIN] }),order.updateOrder)
+const {
+    ORDER : { VALIDATOR }
+} = require("../controllers")
+
+
+router.route("/addOrder").post(
+    auth({ usersAllowed: [ROLE.USER] }),
+    VALIDATOR.addOrder,
+    order.addOrder
+);
+
+router.route("/getOrder").get(
+    auth({ usersAllowed: [ROLE.USER , ROLE.ADMIN] }),
+    VALIDATOR.getOrder,
+    order.getOrder
+);
+
+router.route("/updateOrder").put(
+    auth({ usersAllowed: [ROLE.ADMIN] }),
+    VALIDATOR.updateOrder,
+    order.updateOrder
+);
 
 
 module.exports = router

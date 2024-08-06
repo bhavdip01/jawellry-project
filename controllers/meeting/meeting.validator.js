@@ -6,11 +6,11 @@ const validator = require("../../middleware/validator").validator;
 module.exports = {
     createMeeting: validator({
     body: Joi.object({
-      userId: Joi.array().items(Joi.string()).required(),
+      userId: Joi.string(),
       title: Joi.string().trim(),
       description:Joi.string().trim(),
-      startDate:Joi.date().iso(),
-      endDate:Joi.date().iso(),
+      startDate:Joi.date(),
+      endDate:Joi.date(),
       startTime:Joi.string().trim(),
       endTime:Joi.string().trim()
     }),
@@ -19,8 +19,8 @@ module.exports = {
     query: Joi.object({
       id: Joi.string(),
       userid: Joi.string(),
-      startDate:Joi.date().iso(),
-      endDate:Joi.date().iso(),
+      startDate:Joi.date(),
+      endDate:Joi.date(),
       page:Joi.string(),
       limit:Joi.string(),
     }),
@@ -32,8 +32,8 @@ module.exports = {
     body: Joi.object({
       title: Joi.string().trim(),
       description:Joi.string().trim(),
-      startDate:Joi.date().iso(),
-      endDate:Joi.date().iso(),
+      startDate:Joi.date(),
+      endDate:Joi.date(),
       startTime:Joi.string().trim(),
       endTime:Joi.string().trim()
     }),

@@ -8,9 +8,32 @@ const {
     ENUM: { ROLE },
 } = require("../helpers/constant.helper")
 
-router.route("/").post(auth({ usersAllowed: [ROLE.ADMIN] }),returnCondition.createReturnCondition);
-router.route("/").get(returnCondition.getReturnCondition);
-router.route("/").put(auth({ usersAllowed: [ROLE.ADMIN] }),returnCondition.updateReturnCondition);
-router.route("/").delete(auth({ usersAllowed: [ROLE.ADMIN] }),returnCondition.deleteReturnCondition);
+const {
+    RETURN_CONDITION: { VALIDATOR },
+  } = require("../controllers");
+
+router.route("/").post(
+  auth({ usersAllowed: [ROLE.ADMIN] }),
+  VALIDATOR.createReturnCondition,
+  returnCondition.createReturnCondition
+);
+
+router.route("/").get(
+  auth({ usersAllowed: [ROLE.USER , ROLE.ADMIN] }),
+  VALIDATOR.getReturnCondition,
+  returnCondition.getReturnCondition
+);
+
+router.route("/").put(
+  auth({ usersAllowed: [ROLE.ADMIN] }),
+  VALIDATOR.updateReturnCondition,
+  returnCondition.updateReturnCondition
+);
+
+router.route("/").delete(
+  auth({ usersAllowed: [ROLE.ADMIN] }),
+  VALIDATOR.deleteReturnCondition,
+  returnCondition.deleteReturnCondition
+);
 
 module.exports = router;

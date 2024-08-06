@@ -35,6 +35,10 @@ const feedBackSchema = new Schema(
             type: Boolean,
             default: false,
         }        
+    },
+    {
+        timestamps: true,
+        versionKey: false,
     }
 )
 

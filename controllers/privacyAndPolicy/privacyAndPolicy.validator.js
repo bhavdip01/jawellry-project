@@ -9,7 +9,7 @@ module.exports = {
             description:Joi.string(),
         }),
     }),
-    get:validator({
+    getPrivacyAndPolicy:validator({
         query:Joi.object({
             id:Joi.string(),
             name:Joi.string(),
@@ -17,7 +17,7 @@ module.exports = {
             limit:Joi.string(),
         }),
     }),
-    update:validator({
+    updatePrivacyAndPolicy:validator({
         query:Joi.object({
             id:Joi.string(),
         }),
@@ -26,7 +26,7 @@ module.exports = {
             description:Joi.string(),
         }),
     }),
-    delete: validator({
+    deletePrivacyAndPolicy: validator({
         query: Joi.object({
           id: Joi.string(),
       }),

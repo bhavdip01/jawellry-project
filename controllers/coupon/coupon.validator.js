@@ -3,40 +3,41 @@ const Joi = require("joi");
 const validator = require("../../middleware/validator").validator;
 
 module.exports = {
-  create: validator({
+  createCoupon: validator({
     body: Joi.object({
       couponName: Joi.string().lowercase().trim().required(),
       couponCode: Joi.string().trim(),
       discountType:Joi.string().trim(),
       amount: Joi.number().required(),
-      startDate:Joi.date().iso(),
-      endDate:Joi.date().iso(),
+      startDate:Joi.date(),
+      endDate:Joi.date(),
       startTime:Joi.string().trim(),
       endTime:Joi.string().trim()
     }),
   }),
-  get: validator({
+  getCoupon: validator({
     query: Joi.object({
-      _id: Joi.string(),
+      id: Joi.string(),
+      couponname: Joi.string(),
       page:Joi.string(),
       limit:Joi.string(),
     }),
   }),
-  update: validator({
+  updateCoupon: validator({
     query: Joi.object({
-      _id: Joi.string(),
+      id: Joi.string(),
     }),
     body: Joi.object({
       amount: Joi.number(),
-      startDate:Joi.date().iso(),
-      endADate:Joi.date().iso(),
+      startDate:Joi.date(),
+      endDate:Joi.date(),
       startTime:Joi.string().trim(),
       endTime:Joi.string().trim()
     }),
   }),
-  delete: validator({
+  deleteCoupon: validator({
     query: Joi.object({
-      _id: Joi.string(),
+      id: Joi.string(),
     }),
   }),
 };

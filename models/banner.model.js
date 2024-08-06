@@ -27,6 +27,10 @@ let bannerSchema = new Schema(
             ref: "Image",
             required: true,
         },
+    },
+    {
+        timestamps: true,
+        versionKey: false,
     }
 )
 

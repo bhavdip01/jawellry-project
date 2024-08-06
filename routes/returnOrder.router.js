@@ -8,10 +8,34 @@ const {
     ENUM: { ROLE },
 } = require("../helpers/constant.helper")
 
-router.route("/").post(auth({ usersAllowed: [ROLE.ADMIN,ROLE.USER] }),returnOrder.createReturnOrder);
-router.route("/").get(returnOrder.getReturnOrder);
-router.route("/").put(auth({ usersAllowed: [ROLE.ADMIN] }),returnOrder.returnOrderStatusUpdate);
-router.route("/").delete(auth({ usersAllowed: [ROLE.ADMIN,ROLE.USER] }),returnOrder.deleteReturnOrder);
+
+const {
+    RETURN_ORDER: { VALIDATOR },
+  } = require("../controllers");
+
+router.route("/").post(
+  auth({ usersAllowed: [ROLE.ADMIN,ROLE.USER] }),
+  VALIDATOR.createReturnOrder,
+  returnOrder.createReturnOrder
+);
+
+router.route("/").get(
+  auth({ usersAllowed: [ROLE.USER , ROLE.ADMIN] }),
+  VALIDATOR.getReturnOrder,
+  returnOrder.getReturnOrder
+);
+
+router.route("/").put(
+  auth({ usersAllowed: [ROLE.ADMIN] }),
+  VALIDATOR.updateReturnOrderStatus,
+  returnOrder.updateReturnOrderStatus
+);
+
+router.route("/").delete(
+  auth({ usersAllowed: [ROLE.ADMIN,ROLE.USER] }),
+  VALIDATOR.deleteReturnOrder,
+  returnOrder.deleteReturnOrder
+);
 
 
 
